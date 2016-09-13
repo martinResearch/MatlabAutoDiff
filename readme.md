@@ -27,8 +27,7 @@ more examples can be found in [./src/AutoDiffExamples.m](./src/examplesSmall.m)
 
  * Simple example
 
-```
-#!matlab
+```c
 
  		>> f=@(x) [sin(x(1)) cos(x(2)) tan(x(1)*x(2))];
  		>> JAD=full(AutoDiffJacobianAutoDiff(f,[1,1]))
@@ -46,8 +45,7 @@ more examples can be found in [./src/AutoDiffExamples.m](./src/examplesSmall.m)
 
 	 
  * Autmomatic Differentiation vs Finite Differences seedup illustration 
-```
-#!matlab
+```c
 		>> f=@(x) (log(x(1:end-1))-tan(x(2:end)))
 		>> tic; JAD=AutoDiffJacobianAutoDiff(f,0.5*ones(1,5000));timeAD=toc;
 		>> tic; JFD=sparse(AutoDiffJacobianFiniteDiff(f,0.5*ones(1,5000)));timeFD=toc;
@@ -60,8 +58,7 @@ more examples can be found in [./src/AutoDiffExamples.m](./src/examplesSmall.m)
 
 
  * N-D array support
-```
-#!matlab
+```c
 	 	>> f=@(x) sum(x.^2,3);
 	 	>> AutoDiffJacobianFiniteDiff(f,ones(2,2,2))
 		ans =
@@ -73,8 +70,7 @@ more examples can be found in [./src/AutoDiffExamples.m](./src/examplesSmall.m)
 
 ```
 * a simple images denoising example using a total variation (TV) regularization can be found in  [./src/AutoDiffExamples.m](./src/exampleDenoise.m)
-```
-#!matlab
+```c
 	 	f=@(x) sum(x.^2,3);
 	 	AutoDiffJacobianFiniteDiff(f,ones(2,2,2))
 	 	Inoisy=zeros(100,100)*0.2;
@@ -100,8 +96,7 @@ more examples can be found in [./src/AutoDiffExamples.m](./src/examplesSmall.m)
 
 ```
 * a simple SVM classifier training example can be found in  [./src/AutoDiffExamples.m](./src/exampleSVM.m)
-```
-#!matlab
+```c
 	 function exampleSVM()
 	 	% create some fake data
 	 	n=30;
@@ -152,16 +147,14 @@ more examples can be found in [./src/AutoDiffExamples.m](./src/examplesSmall.m)
 * http://mathworks.com/matlabcentral/fileexchange/56856-autodiff. It uses cells to represent derivatives and uses loops instead of vectorized operations in some of the functions, which may make it  too slow when using large matrices.
 
 * http://mathworks.com/matlabcentral/fileexchange/26807-automatic-differentiation-with-matlab-objects. Does not support ND arrays or even some matrix operations. This will fail.
-```
-#!matlab	 	
+```c	 	
 	 	f=@(x) sum(x'*x)
 	 	[x,dx] = autodiff(rand(5,1),f)
 
 ```
 * https://github.com/gaika/madiff
   reverse mode. Operators like transpose are not coded yet  at the date of july 2016 . This will fail
-```
-#!matlab	 	
+```c	 	
 	 	f=@(x)(sum(x'*x))
 	 	f(rand(20,1))
 	 	f_grad = @(x) adiff(f, x);
