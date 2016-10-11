@@ -444,7 +444,7 @@ classdef AutoDiff
                     end
                 else
                     if numel(y)==1
-                        y.derivatives = - sparse(ones(numel(x),1))*y.derivatives;
+                        y.derivatives =  sparse(ones(numel(x),1))*y.derivatives;
                     end
                     y.values = x - y.values;
                     y.derivatives= - y.derivatives;
