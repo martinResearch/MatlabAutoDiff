@@ -507,7 +507,7 @@ classdef AutoDiff
             end
             if (~isa(x, 'AutoDiff')) && (size(y.values,2)==1)
                 z.values=x*y.values;
-                z.derivatives = x*y.derivatives;
+                z.derivatives = sparse(x)*y.derivatives;
                 z=AutoDiff(z.values,z.derivatives);
             else
 
