@@ -44,7 +44,7 @@ more examples can be found in [./src/AutoDiffExamples.m](./src/examplesSmall.m)
 ```
 
 	 
- * Autmomatic Differentiation vs Finite Differences seedup illustration 
+ * Autmomatic Differentiation vs Finite Differences speedup illustration 
 ```c
 		>> f=@(x) (log(x(1:end-1))-tan(x(2:end)))
 		>> tic; JAD=AutoDiffJacobianAutoDiff(f,0.5*ones(1,5000));timeAD=toc;
