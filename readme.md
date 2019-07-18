@@ -44,7 +44,7 @@ more examples can be found in [./src/AutoDiffExamples.m](./src/examplesSmall.m)
 ```
 
 	 
- * Autmomatic Differentiation vs Finite Differences speedup illustration 
+ * Automatic Differentiation vs Finite Differences speedup illustration 
 ```c
 		>> f=@(x) (log(x(1:end-1))-tan(x(2:end)))
 		>> tic; JAD=AutoDiffJacobianAutoDiff(f,0.5*ones(1,5000));timeAD=toc;
@@ -57,7 +57,7 @@ more examples can be found in [./src/AutoDiffExamples.m](./src/examplesSmall.m)
 ```
 
 
- * N-D array support
+ * N-D arrays support
 ```c
 	 	>> f=@(x) sum(x.^2,3);
 	 	>> AutoDiffJacobianFiniteDiff(f,ones(2,2,2))
