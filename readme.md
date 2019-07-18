@@ -165,6 +165,8 @@ more examples can be found in [./src/AutoDiffExamples.m](./src/examplesSmall.m)
    
 * https://github.com/jborggaard/AD_Deriv
   works only with scalars at the date of july 2016 (no vector , matrices and NDarrays)
+  
+* https://pypi.org/project/sparsegrad/. automatically and efficiently calculates analytical sparse Jacobian of arbitrary numpy vector valued functions.
 
 
 ## References
