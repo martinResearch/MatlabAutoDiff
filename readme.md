@@ -1,7 +1,7 @@
 # Goal
     
  This project implements a Matlab/Octave forward automatic differentiation method, ([wikipedia definition here](https://en.wikipedia.org/wiki/Automatic_differentiation#Forward_accumulation)) based
- on operator overloading. This does not provide backward mode. It enables precise and efficient
+ on operator overloading. This does not provide backward mode or higher order derivatives. It enables precise and efficient
  computation of the Jacobian of a function. This contrasts with numerical differentiation (a.k.a finite differences) that is  unprecise due to roundoff errors and that cannot exploit the sparsity of the derivatives.
     
 In contrast with most existing automatic differentiation Matlab toolboxes:
