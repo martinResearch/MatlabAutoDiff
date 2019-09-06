@@ -1,7 +1,7 @@
 # Goal
     
  This project implements a Matlab/Octave forward automatic differentiation method, ([wikipedia definition here](https://en.wikipedia.org/wiki/Automatic_differentiation#Forward_accumulation)) based
- on operator overloading. This does not provide backward mode. It enables precise and efficient
+ on operator overloading. This does not provide backward mode or higher order derivatives. It enables precise and efficient
  computation of the Jacobian of a function. This contrasts with numerical differentiation (a.k.a finite differences) that is  unprecise due to roundoff errors and that cannot exploit the sparsity of the derivatives.
     
 In contrast with most existing automatic differentiation Matlab toolboxes:
@@ -27,8 +27,7 @@ more examples can be found in [./src/AutoDiffExamples.m](./src/examplesSmall.m)
 
  * Simple example
 
-```
-#!matlab
+```c
 
  		>> f=@(x) [sin(x(1)) cos(x(2)) tan(x(1)*x(2))];
  		>> JAD=full(AutoDiffJacobianAutoDiff(f,[1,1]))
@@ -45,9 +44,8 @@ more examples can be found in [./src/AutoDiffExamples.m](./src/examplesSmall.m)
 ```
 
 	 
- * Autmomatic Differentiation vs Finite Differences seedup illustration 
-```
-#!matlab
+ * Automatic Differentiation vs Finite Differences speedup illustration 
+```c
 		>> f=@(x) (log(x(1:end-1))-tan(x(2:end)))
 		>> tic; JAD=AutoDiffJacobianAutoDiff(f,0.5*ones(1,5000));timeAD=toc;
 		>> tic; JFD=sparse(AutoDiffJacobianFiniteDiff(f,0.5*ones(1,5000)));timeFD=toc;
@@ -59,9 +57,8 @@ more examples can be found in [./src/AutoDiffExamples.m](./src/examplesSmall.m)
 ```
 
 
- * N-D array support
-```
-#!matlab
+ * N-D arrays support
+```c
 	 	>> f=@(x) sum(x.^2,3);
 	 	>> AutoDiffJacobianFiniteDiff(f,ones(2,2,2))
 		ans =
@@ -73,8 +70,7 @@ more examples can be found in [./src/AutoDiffExamples.m](./src/examplesSmall.m)
 
 ```
 * a simple images denoising example using a total variation (TV) regularization can be found in  [./src/AutoDiffExamples.m](./src/exampleDenoise.m)
-```
-#!matlab
+```c
 	 	f=@(x) sum(x.^2,3);
 	 	AutoDiffJacobianFiniteDiff(f,ones(2,2,2))
 	 	Inoisy=zeros(100,100)*0.2;
@@ -100,8 +96,7 @@ more examples can be found in [./src/AutoDiffExamples.m](./src/examplesSmall.m)
 
 ```
 * a simple SVM classifier training example can be found in  [./src/AutoDiffExamples.m](./src/exampleSVM.m)
-```
-#!matlab
+```c
 	 function exampleSVM()
 	 	% create some fake data
 	 	n=30;
@@ -152,16 +147,14 @@ more examples can be found in [./src/AutoDiffExamples.m](./src/examplesSmall.m)
 * http://mathworks.com/matlabcentral/fileexchange/56856-autodiff. It uses cells to represent derivatives and uses loops instead of vectorized operations in some of the functions, which may make it  too slow when using large matrices.
 
 * http://mathworks.com/matlabcentral/fileexchange/26807-automatic-differentiation-with-matlab-objects. Does not support ND arrays or even some matrix operations. This will fail.
-```
-#!matlab	 	
+```c	 	
 	 	f=@(x) sum(x'*x)
 	 	[x,dx] = autodiff(rand(5,1),f)
 
 ```
 * https://github.com/gaika/madiff
   reverse mode. Operators like transpose are not coded yet  at the date of july 2016 . This will fail
-```
-#!matlab	 	
+```c	 	
 	 	f=@(x)(sum(x'*x))
 	 	f(rand(20,1))
 	 	f_grad = @(x) adiff(f, x);
@@ -172,6 +165,8 @@ more examples can be found in [./src/AutoDiffExamples.m](./src/examplesSmall.m)
    
 * https://github.com/jborggaard/AD_Deriv
   works only with scalars at the date of july 2016 (no vector , matrices and NDarrays)
+  
+* https://pypi.org/project/sparsegrad/. automatically and efficiently calculates analytical sparse Jacobian of arbitrary numpy vector valued functions.
 
 
 ## References
