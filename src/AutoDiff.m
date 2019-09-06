@@ -85,13 +85,17 @@ classdef AutoDiff
             x.derivatives=derivatives;
         end
         
-        function double(~)
-            error(['Conversion to double from AutoDiff is not possible.'...
-                ' This my be due to preallocation of the left side of the assignement.'...
-                ' Considere modifying the code to avoid preallocation of converting the'...
-                ' preallocated array to AutoDiff by multiplying it with a AutoDiff variable.'...
-                ' As an example b=AutoDiff(1);a=[0,0];a(1)=b;  could be replaced by  b=AutoDiff(1);a=[0,0]*b(1);a(1)=b']);
+        function x=double(~)
+            error(['Conversion to double from AutoDiff is not possible.\n'...
+                'This might be due to preallocation of the array on the left side of the assignement.\n'...
+                'Considere modifying the code by either\n'...
+                ' - vectorizing your code to void preallocation or that array\n'...
+                ' - create the prealocated array as AutoDiff when needed with the right size derivatives using autodiff_identity\n'...
+                ' - create a cell array of the elements and then concatenate them\n'...
+                'see troubleshoot example 1 in autodiff_troubleshoot.m for a more detailed examples and solutions\n'...
+                'Note that vectorizing your code is likely to avoid the preallocation is likely to lead to faster execution']);
         end
+       
         
         function x = abs(x)
             x.derivatives = AutoDiff.spdiag(sign(x.values))* x.derivatives;
@@ -444,10 +448,10 @@ classdef AutoDiff
                     end
                 else
                     if numel(y)==1
-                        y.derivatives = - sparse(ones(numel(x),1))*y.derivatives;
+                        y.derivatives = sparse(ones(numel(x),1))*y.derivatives;
                     end
                     y.values = x - y.values;
-                    y.derivatives= - y.derivatives;
+                    y.derivatives = - y.derivatives;
                     x = y;
                 end
             else
@@ -507,7 +511,7 @@ classdef AutoDiff
             end
             if (~isa(x, 'AutoDiff')) && (size(y.values,2)==1)
                 z.values=x*y.values;
-                z.derivatives = x*y.derivatives;
+                z.derivatives = sparse(x)*y.derivatives;
                 z=AutoDiff(z.values,z.derivatives);
             else
 

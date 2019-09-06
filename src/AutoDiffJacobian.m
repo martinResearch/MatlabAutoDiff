@@ -45,13 +45,13 @@ elseif strcmpi(method,'VerifiedAutoDiff')
      err=norm(J-J2);
      fprintf('difference between finite differencing and automatic differencing = %e\n',err);
      if any((J2(:)==0)&(J(:)~=0))
-         warning('this is VERY suscipcius (zeros in the finit diff jacobian that are not in the AD jacobian), we check that there is no bug in the optAD class by caling the function with the AutoDiffveriv class...');
+         warning('this is VERY suspicius (zeros in the finite diff jacobian that are not in the AD jacobian), we check that there is no bug in the optAD class by calling the function with the AutoDiffveriv class...');
          xADv=AutoDiffVerif(x);
          fADx=func(xADv);
      end    
      if err>1e-4
          figure;imagesc((J2==0)&(J~=0))
-         warning('this is suscipcius, we check that there is no bug in the optAD class by caling the function with the AutoDiffveriv class...');
+         warning('this is suspicius, we check that there is no bug in the optAD class by calling the function with the AutoDiffverif class...');
          xADv=AutoDiffVerif(x);
          fADx=func(xADv);
          

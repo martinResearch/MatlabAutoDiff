@@ -89,7 +89,7 @@ classdef AutoDiffFD
             val = x.values;
         end
         
-        function x=setdervis(x,derivatives)
+        function x=setderivs(x,derivatives)
             x.derivatives=derivatives;
         end
         function double(~)

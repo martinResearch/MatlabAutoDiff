@@ -88,7 +88,7 @@ classdef AutoDiffVerif
             val = getvalue(x.FD);
         end
         
-        function x=setdervis(x,derivatives)
+        function x=setderivs(x,derivatives)
             x.derivatives=derivatives;
         end
         function double(~)
@@ -97,7 +97,7 @@ classdef AutoDiffVerif
             error(['Conversion to double from AutoDiff is not possible.'...
                 ' This my be due to preallocation of the left side of the assignement.'...
                 ' Considere modifying the code to avoid preallocation of converting the'...
-                ' preallocated arraqy to AutoDiff by multiplying it with a AutoDiff variable.'...
+                ' preallocated array to AutoDiff by multiplying it with an AutoDiff variable.'...
                 ' As an example b=AutoDiff(1);a=[0,0];a(1)=b;  could be replaced by  b=AutoDiff(1);a=[0,0]*b(1);a(1)=b']);
         end
         
