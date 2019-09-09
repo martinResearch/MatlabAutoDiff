@@ -758,13 +758,13 @@ classdef AutoDiff
             if (ndims(x)==ndims(y)) && all(size(x)==size(y))
                 z=x;
             elseif isa(x, 'AutoDiff')
-                r1=reshape((1:numel(x.values)),size(x)).* ones(size(y.values));
-                z.values=x.values(r1);
-                z.derivatives = sparse(1:numel(r1),r1,ones(size(r1)))* x.derivatives;
+                r=reshape((1:numel(x.values)),size(x.values)).* ones(size(y));
+                z.values=x.values(r);
+                z.derivatives = sparse(1:numel(r),r,ones(size(r)))* x.derivatives;
                 z=AutoDiff(z);
             else
-                r2=ones(size(x.values)).*reshape((1:numel(y)),size(y));
-                z=y(r2);
+                r=reshape((1:numel(x)),size(x)).* ones(size(y));
+                z=x(r);
             end
         end
                 
