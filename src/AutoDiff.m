@@ -195,7 +195,7 @@ classdef AutoDiff
                     y.values=cat(dim,y.values,x);
                 else
                     y.values = cat(dim,y.values, x.values);
-                    if nderivs~=size(x.derivatives,2);
+                    if nderivs~=size(x.derivatives,2)
                         error('AutoDiff:NonUniformDerivatesNumber','The number of derivatives is not uniform');
                     end
                 end
@@ -438,19 +438,12 @@ classdef AutoDiff
         function x = minus(x, y)
             if isa(y, 'AutoDiff')
                 if isa(x, 'AutoDiff')
-                    
-                    x.values = x.values - y.values;
-                    if numel(y)==1
-                        x.derivatives = x.derivatives - sparse(ones(numel(x),1))*y.derivatives;
-                    elseif numel(x)==1
-                        x.derivatives = sparse(ones(numel(x),1))*x.derivatives - y.derivatives;
-                    else
-                        x.derivatives = x.derivatives - y.derivatives;
-                    end
+                    x = repmat_as(x,y);
+                    y = repmat_as(y,x);                   
+                    x.derivatives = x.derivatives - y.derivatives;                   
                 else
-                    if numel(y)==1
-                        y.derivatives = sparse(ones(numel(x),1))*y.derivatives;
-                    end
+                    x = repmat_as(x,y);
+                    y = repmat_as(y,x);
                     y.values = x - y.values;
                     y.derivatives = - y.derivatives;
                     x = y;
@@ -561,20 +554,14 @@ classdef AutoDiff
         
         function x = plus(x, y)
             if isa(y, 'AutoDiff')
-                if isa(x, 'AutoDiff')
-                    
+               if isa(x, 'AutoDiff')                    
+                    x = repmat_as(x,y);
+                    y = repmat_as(y,x);
                     x.values = x.values + y.values;
-                    if numel(y)==1
-                        x.derivatives = x.derivatives + sparse(ones(numel(x),1))*y.derivatives;
-                    elseif numel(x)==1
-                        x.derivatives = sparse(ones(numel(x),1))*x.derivatives + y.derivatives;
-                    else
-                        x.derivatives = x.derivatives + y.derivatives;
-                    end
+                    x.derivatives = x.derivatives + y.derivatives;                    
                 else
-                    if numel(y)==1
-                        y.derivatives = sparse(ones(numel(x),1))*y.derivatives;
-                    end
+                    x = repmat_as(x,y);
+                    y = repmat_as(y,x);
                     y.values = x + y.values;
                     x = y;
                 end
@@ -604,20 +591,21 @@ classdef AutoDiff
         function x = rdivide(x,y)
             if isa(y, 'AutoDiff')
                 if isa(x, 'AutoDiff')
-                    if numel(y.values)==1
-                        %x=x.*(y.^(-1));
-                        x.derivatives = x.derivatives/y.values - sparse(x.values(:)./y.values(:).^2)*y.derivatives;
-                        x.values = x.values./y.values;
-                    else
+                        x = repmat_as(x,y);
+                        y = repmat_as(y,x);
                         x.derivatives = AutoDiff.spdiag(1./y.values)* x.derivatives - AutoDiff.spdiag(x.values./y.values.^2)* y.derivatives;
                         x.values = x.values./y.values;
-                    end
+                    
                 else
+                    x = repmat_as(x,y);
+                    y = repmat_as(y,x);
                     y.derivatives = AutoDiff.spdiag(- x./y.values.^2)* y.derivatives;
                     y.values = x./y.values;
                     x = y;
                 end
             else
+                x = repmat_as(x,y);
+                y = repmat_as(y,x);
                 x.derivatives = AutoDiff.spdiag(1./y)* x.derivatives;
                 x.values = x.values./y;
             end
@@ -766,7 +754,20 @@ classdef AutoDiff
              x=sum(x,dim)/s(dim);
         end
         
-        
+        function z=repmat_as(x,y)
+            if (ndims(x)==ndims(y)) && all(size(x)==size(y))
+                z=x;
+            elseif isa(x, 'AutoDiff')
+                r1=reshape((1:numel(x.values)),size(x)).* ones(size(y.values));
+                z.values=x.values(r1);
+                z.derivatives = sparse(1:numel(r1),r1,ones(size(r1)))* x.derivatives;
+                z=AutoDiff(z);
+            else
+                r2=ones(size(x.values)).*reshape((1:numel(y)),size(y));
+                z=y(r2);
+            end
+        end
+                
         
         function z = times(x,y)
             if isa(x, 'AutoDiff')
@@ -776,7 +777,11 @@ classdef AutoDiff
                         z.derivatives = sparse(y.values(:))*x.derivatives+x.values* y.derivatives;
                     elseif  numel(y.values)==1
                         z.derivatives = sparse(x.values(:))*y.derivatives+y.values* x.derivatives;
-                    else
+                    elseif (ndims(x)==ndims(y)) && all(size(x)==size(y))
+                        z.derivatives = AutoDiff.spdiag(y.values)* x.derivatives+ AutoDiff.spdiag(x.values)* y.derivatives;
+                    else %using broadcasting
+                        x = repmat_as(x,y);
+                        y = repmat_as(y,x);
                         z.derivatives = AutoDiff.spdiag(y.values)* x.derivatives+ AutoDiff.spdiag(x.values)* y.derivatives;
                     end
                     
@@ -785,20 +790,20 @@ classdef AutoDiff
                     if numel(x.values)==1
                         z.derivatives = sparse(y(:))*x.derivatives;
                     else
-                        z.derivatives = AutoDiff.spdiag(y)* x.derivatives;
-                    end
-                    
+                        if (ndims(x)==ndims(y)) ||all(size(x)==size(x))
+                             z.derivatives = AutoDiff.spdiag(y)* x.derivatives;
+                        else %using broadcasting
+                            x = repmat_as(x,y);
+                            y = repmat_as(y,x);
+                            z.derivatives = AutoDiff.spdiag(y(r2))* sparse(1:numel(r1),r1,ones(size(r1)))* x.derivatives;                      
+                        end
+                    end                    
                 end
+                z=AutoDiff(z);
             else
-                z.values = y.values.*x;
-                if numel(y.values)==1
-                    z.derivatives = sparse(x(:))*y.derivatives;
-                else
-                    z.derivatives = AutoDiff.spdiag(x)* y.derivatives;
-                end
-                
+                z = times(y,x);                
             end
-            z=AutoDiff(z);
+            
         end
         
         
@@ -942,7 +947,7 @@ classdef AutoDiff
         function d= spdiag(a)
             if isscalar(a)
                 d=a;
-            elseif issparse(a);
+            elseif issparse(a)
                 t,v=find(a(:));
                 d= sparse(t,t,v);
             else
