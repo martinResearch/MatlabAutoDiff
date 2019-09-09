@@ -64,7 +64,7 @@ try
     f=getvalue(fAD);
     J=getderivs(fAD);
 catch exception
-    warning('failed while callin the function with the AutoDiff instance, trying to call it with the plain data instead to chech that works')
+    warning('failed while calling the function with the AutoDiff instance, trying to call it with the plain data instead to chech that works')
     func(x)
     warning('seems like to original function is ok with the plain data , The class AutoDiff needs debugging')
    % rethrow(exception)

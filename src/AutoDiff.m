@@ -90,6 +90,7 @@ classdef AutoDiff
                 'This might be due to preallocation of the array on the left side of the assignement.\n'...
                 'Considere modifying the code by either\n'...
                 ' - vectorizing your code to void preallocation or that array\n'...
+                ' - create the prealocated array as AutoDiff using zeros(m,n,''like'', x) or ones(m,n,''like'', x) with x the differentiated input'...
                 ' - create the prealocated array as AutoDiff when needed with the right size derivatives using autodiff_identity\n'...
                 ' - create a cell array of the elements and then concatenate them\n'...
                 'see troubleshoot example 1 in autodiff_troubleshoot.m for a more detailed examples and solutions\n'...
@@ -906,10 +907,23 @@ classdef AutoDiff
         function y = vertcat(varargin)
             y=cat(1,varargin{:});
         end
+
+        function x = ones(varargin)
+            k=find(cellfun(@isnumeric,varargin),1,'last');
+            assert(length(varargin)==k+2);
+            assert(strcmp(varargin{k+1},'like'));            
+            x.values = ones(varargin{1:k});
+            x.derivatives = zeros(numel(x.values),size(varargin{k+2}.derivatives,2));
+            x=AutoDiff(x);
+        end
         
-        function x = zeros(x)
-            x.values = x.values*0;
-            x.derivatives = x.derivatives*0;
+        function x = zeros(varargin)
+            k=find(cellfun(@isnumeric,varargin),1,'last');
+            assert(length(varargin)==k+2);
+            assert(strcmp(varargin{k+1},'like'));            
+            x.values = zeros(varargin{1:k});
+            x.derivatives = zeros(numel(x.values),size(varargin{k+2}.derivatives,2));
+            x=AutoDiff(x);
         end
         
         function r=rank(x,varargin)
