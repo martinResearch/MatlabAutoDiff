@@ -790,12 +790,12 @@ classdef AutoDiff
                     if numel(x.values)==1
                         z.derivatives = sparse(y(:))*x.derivatives;
                     else
-                        if (ndims(x)==ndims(y)) ||all(size(x)==size(x))
+                        if (ndims(x)==ndims(y)) && all(size(x)==size(y))
                              z.derivatives = AutoDiff.spdiag(y)* x.derivatives;
                         else %using broadcasting
                             x = repmat_as(x,y);
                             y = repmat_as(y,x);
-                            z.derivatives = AutoDiff.spdiag(y(r2))* sparse(1:numel(r1),r1,ones(size(r1)))* x.derivatives;                      
+                            z.derivatives = AutoDiff.spdiag(y)* x.derivatives;                      
                         end
                     end                    
                 end
