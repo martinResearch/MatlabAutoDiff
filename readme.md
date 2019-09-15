@@ -139,21 +139,24 @@ more examples can be found in [./src/AutoDiffExamples.m](./src/examplesSmall.m)
 	 	end
 ```
 # Related projects
-*  http://matlabad.com/ or http://tomopt.com/tomlab/products/mad/   Not free. Method described in [1]. Like our code it uses operatore overloading and can use sparse matrices to store directional derivatives.
+* [Autodiff_R2016b](https://uk.mathworks.com/matlabcentral/fileexchange/61849-autodiff_r2016b) and [Autodiff_R2015b](http://mathworks.com/matlabcentral/fileexchange/56856-autodiff) by Ultrich Reif. It uses cells to represent derivatives and uses loops instead of vectorized operations in some of the functions, which may make it  too slow when using large matrices.
+* 
 
-* http://www.mathworks.com/matlabcentral/fileexchange/15235-automatic-differentiation-for-matlab/
-  forward mode using operator overloading. Does not work with ND arrays. Not efficient for functions with sparse jacobians as it uses dense 3D arrays to store the derivatives.
+*  [TOMLAB/MAD](http://tomopt.com/tomlab/products/mad/)   Not free. Method described in [1]. Like our code it uses operator overloading and can use sparse matrices to store directional derivatives.
 
-* http://mathworks.com/matlabcentral/fileexchange/56856-autodiff. It uses cells to represent derivatives and uses loops instead of vectorized operations in some of the functions, which may make it  too slow when using large matrices.
+* [Automatic Differentiation for Matlab](http://www.mathworks.com/matlabcentral/fileexchange/15235-automatic-differentiation-for-matlab/) by Martin Fink.
+  Forward mode AD using operator overloading. Does not work with ND arrays. Not efficient for functions with sparse jacobians as it uses dense 3D arrays to store the derivatives.
 
-* http://mathworks.com/matlabcentral/fileexchange/26807-automatic-differentiation-with-matlab-objects. Does not support ND arrays or even some matrix operations. This will fail.
+
+
+* [Automatic Differentiation with Matlab Objects](http://mathworks.com/matlabcentral/fileexchange/26807-automatic-differentiation-with-matlab-objects) by William Mcllhagga. Does not support ND arrays or even some matrix operations. This will fail.
 ```c	 	
 	 	f=@(x) sum(x'*x)
 	 	[x,dx] = autodiff(rand(5,1),f)
 
 ```
-* https://github.com/gaika/madiff
-  reverse mode. Operators like transpose are not coded yet  at the date of july 2016 . This will fail
+* [madiff](https://github.com/gaika/madiff)
+  Reverse mode AD using operator overloading Operators like transpose are not coded yet  at the date of july 2016 . This will fail
 ```c	 	
 	 	f=@(x)(sum(x'*x))
 	 	f(rand(20,1))
@@ -163,10 +166,10 @@ more examples can be found in [./src/AutoDiffExamples.m](./src/examplesSmall.m)
 ```
 
    
-* https://github.com/jborggaard/AD_Deriv
+* [AD_deriv](https://github.com/jborggaard/AD_Deriv) by Jeff Borggaard
   works only with scalars at the date of july 2016 (no vector , matrices and NDarrays)
   
-* https://pypi.org/project/sparsegrad/. automatically and efficiently calculates analytical sparse Jacobian of arbitrary numpy vector valued functions.
+* [Sparsegrad](https://pypi.org/project/sparsegrad/) by Marek Szymanski. Python. automatically and efficiently calculates analytical sparse Jacobian of arbitrary numpy vector valued functions. Does not support ND arrays yet in August 2019.
 
 
 ## References

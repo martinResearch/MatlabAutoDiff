@@ -40,7 +40,7 @@ elseif strcmpi(method,'FiniteDiff')
     [J,f]=AutoDiffJacobianFiniteDiff(func,x,1:length(x),args.GradEpsilons);
 elseif strcmpi(method,'VerifiedAutoDiff')
      [J,f]=AutoDiffJacobianAutoDiff(func,x);
-     [J2,f2]=AutoDiffJacobianFiniteDiff(func,x,1:numel(x),args.GradEpsilons);
+     [J2,~]=AutoDiffJacobianFiniteDiff(func,x,1:numel(x),args.GradEpsilons);
 
      err=norm(J-J2);
      fprintf('difference between finite differencing and automatic differencing = %e\n',err);
@@ -51,7 +51,7 @@ elseif strcmpi(method,'VerifiedAutoDiff')
      end    
      if err>1e-4
          figure;imagesc((J2==0)&(J~=0))
-         warning('this is suspicius, we check that there is no bug in the optAD class by calling the function with the AutoDiffverif class...');
+         warning('this is suspicius, we check that there is no bug in the optAD class by calling the function with the AutoDiffVerif class...');
          xADv=AutoDiffVerif(x);
          fADx=func(xADv);
          
