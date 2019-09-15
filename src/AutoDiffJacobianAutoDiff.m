@@ -66,7 +66,7 @@ try
 catch exception
     warning('failed while calling the function with the AutoDiff instance, trying to call it with the plain data instead to chech that works')
     func(x)
-    warning('seems like to original function is ok with the plain data , The class AutoDiff needs debugging')
+    warning('It seems like to original function is ok with the plain data , The class AutoDiff needs debugging')
    % rethrow(exception)
     [~]=func(xAD);% better to call again the function instead of using exception as it makes it possible to use matlab's stop-if -error debugging functionality 
 end

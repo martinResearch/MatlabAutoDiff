@@ -412,7 +412,7 @@ classdef AutoDiff
                         m.derivatives=AutoDiff.spdiag(b)*C.derivatives+AutoDiff.spdiag(~b)*B.derivatives;
                     else
                         m.values = max(C.values , B);
-                        b=C.values > B.values;
+                        b=C.values > B;
                         m.derivatives=AutoDiff.spdiag(b)*C.derivatives;
                     end
                 else
@@ -449,6 +449,8 @@ classdef AutoDiff
                     x = y;
                 end
             else
+                x = repmat_as(x,y);
+                y = repmat_as(y,x);
                 x.values = x.values - y;
             end
         end
@@ -566,6 +568,8 @@ classdef AutoDiff
                     x = y;
                 end
             else
+                x = repmat_as(x,y);
+                y = repmat_as(y,x);
                 x.values = x.values + y;
             end
         end
