@@ -140,7 +140,6 @@ more examples can be found in [./src/AutoDiffExamples.m](./src/examplesSmall.m)
 ```
 # Related projects
 * [Autodiff_R2016b](https://uk.mathworks.com/matlabcentral/fileexchange/61849-autodiff_r2016b) and [Autodiff_R2015b](http://mathworks.com/matlabcentral/fileexchange/56856-autodiff) by Ultrich Reif. It uses cells to represent derivatives and uses loops instead of vectorized operations in some of the functions, which may make it  too slow when using large matrices.
-* 
 
 *  [TOMLAB/MAD](http://tomopt.com/tomlab/products/mad/)   Not free. Method described in [1]. Like our code it uses operator overloading and can use sparse matrices to store directional derivatives.
 
@@ -149,14 +148,14 @@ more examples can be found in [./src/AutoDiffExamples.m](./src/examplesSmall.m)
 
 
 
-* [Automatic Differentiation with Matlab Objects](http://mathworks.com/matlabcentral/fileexchange/26807-automatic-differentiation-with-matlab-objects) by William Mcllhagga. Does not support ND arrays or even some matrix operations. This will fail.
+* [Automatic Differentiation with Matlab Objects](http://mathworks.com/matlabcentral/fileexchange/26807-automatic-differentiation-with-matlab-objects) by William Mcllhagga. Supports sparse jacobians but does not support ND arrays or even some matrix operations. This will fail.
 ```c	 	
 	 	f=@(x) sum(x'*x)
 	 	[x,dx] = autodiff(rand(5,1),f)
 
 ```
 * [madiff](https://github.com/gaika/madiff)
-  Reverse mode AD using operator overloading Operators like transpose are not coded yet  at the date of july 2016 . This will fail
+  Reverse mode AD using operator overloading. Operators like transpose are not coded yet  at the date of july 2016 . This will fail
 ```c	 	
 	 	f=@(x)(sum(x'*x))
 	 	f(rand(20,1))

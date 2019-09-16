@@ -228,7 +228,9 @@ classdef AutoDiff
         end
         
         function x=repmat(x,varargin)
-            error('not coded yet')
+            r=repmat(reshape((1:numel(x.values)),size(x.values)),varargin{:});
+            x.values=x.values(r);
+            x.derivatives = sparse(1:numel(r),r,ones(size(r)))* x.derivatives;
         end
         
         function x = ctranspose(x)
@@ -910,6 +912,8 @@ classdef AutoDiff
                 y.values=det(x.values);
                 y.derivatives=[x.values(2,2),-x.values(1,2),-x.values(2,1),x.values(1,1)]*x.derivatives;
                 y=AutoDiff(y.values,y.derivatives);
+            else
+                error('not yet coded')
             end
         end
         
