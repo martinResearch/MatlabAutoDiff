@@ -206,8 +206,6 @@ classdef AutoDiff
             sy=size(y.values);
             nr=1;
             
-            
-            
             for i = 1:nbvarargin
                 x=varargin{i};
                 if isa(x, 'AutoDiff')
@@ -403,7 +401,11 @@ classdef AutoDiff
                     [~,id]=max(C.values);
                     m=AutoDiff(C.values(id),C.derivatives(id,:));
                 else
-                    error('not yet coded');
+                    [v,id]=max(C.values);
+                    id2=id(:)'+(0:numel(id)-1)*size(C.values,1);
+                    m.values=v;                    
+                    tmp=sparse(1:numel(id2),id2(:)',ones(1,numel(id2)),numel(id2),size(C.derivatives,1));
+                    m.derivatives = tmp*C.derivatives;                   
                 end
             elseif nargin==2
                 B=varagin(1);
@@ -422,17 +424,45 @@ classdef AutoDiff
                     b=B.values > C;
                     m.derivatives=AutoDiff.spdiag(b)*B.derivatives;
                 end
+            else
+                error('not coded yet')
             end
             m=AutoDiff(m);
         end
         
-        function  [m,id]=min(C)
-            if isvector(C.values)
-                [~,id]=min(C.values);
-                m=AutoDiff(C.values(id),C.derivatives(id,:));
+        function  [m,id]=min(C,varagin)
+            if nargin==1
+                if isvector(C.values)
+                    [~,id]=min(C.values);
+                    m=AutoDiff(C.values(id),C.derivatives(id,:));
+                else
+                    [v,id]=min(C.values);
+                    id2=id(:)'+(0:numel(id)-1)*size(C.values,1);
+                    m.values=v;                    
+                    tmp=sparse(1:numel(id2),id2(:)',ones(1,numel(id2)),numel(id2),size(C.derivatives,1));
+                    m.derivatives = tmp*C.derivatives;                   
+                end
+            elseif nargin==2
+                B=varagin(1);
+                if isa(C, 'AutoDiff')
+                    if isa(B, 'AutoDiff')
+                        m.values = min(C.values , B.values);
+                        b=C.values < B.values;
+                        m.derivatives=AutoDiff.spdiag(b)*C.derivatives+AutoDiff.spdiag(~b)*B.derivatives;
+                    else
+                        m.values = min(C.values , B);
+                        b=C.values < B;
+                        m.derivatives=AutoDiff.spdiag(b)*C.derivatives;
+                    end
+                else
+                    m.values = min(C , B.values);
+                    b=B.values < C;
+                    m.derivatives=AutoDiff.spdiag(b)*B.derivatives;
+                end
             else
-                error('not yet coded');
+                error('not coded yet')
             end
+            m=AutoDiff(m);
         end
         
         
@@ -441,7 +471,8 @@ classdef AutoDiff
             if isa(y, 'AutoDiff')
                 if isa(x, 'AutoDiff')
                     x = repmat_as(x,y);
-                    y = repmat_as(y,x);                   
+                    y = repmat_as(y,x);  
+                    x.values = x.values - y.values;
                     x.derivatives = x.derivatives - y.derivatives;                   
                 else
                     x = repmat_as(x,y);
@@ -462,12 +493,25 @@ classdef AutoDiff
             if numel(x)==1
                 x=x.^n;
             else
-                error('not coded yet')
+                if n==1
+                    return
+                elseif n>1                                       
+                     x=mtimes(x^(n-1), x);
+                else
+                    error('not coded yet')
+                end
             end
         end
         
-        function inv(~)
-            error('not coded yet')
+        function x = inv(x)
+            x.values = inv(x.values);
+            
+            M1=kron(speye(size(x.values,2)),x.values);
+            M2=kron(x.values',speye(size(x.values,1)));                    
+                        
+            x.derivatives = -M2*M1*x.derivatives ;
+            
+            
         end                
         
         function z = mldivide(x, y)
@@ -549,7 +593,19 @@ classdef AutoDiff
             if nargin==1
                 p = 2;
             end
-            x = sum(abs(x(:)).^p).^(1/p);
+            
+            if isvector(x)
+              x = sum(abs(x.^p)).^(1/p);
+            elseif ismatrix(x)
+                [u,d,v]=svd(x);
+                x=max(d);
+            else
+                error('not sure what matlab does in this case');
+            end
+        end
+        
+        function [U,S,V] = svd(x)
+            error('not coded yet, could look at the eig implementation')
         end
         
         function n = numel(x)
@@ -641,8 +697,28 @@ classdef AutoDiff
         
         function varargout = sort(x,varargin)
             [val, idx] = sort(x.values,varargin{:});
+            
+            
+            if isvector(x.values)
+                x.derivatives = x.derivatives(idx(:),:);
+            elseif ismatrix(x.values)
+                if (nargin>1) && isscalar(varargin{1})
+                    dim=varargin{1};
+                else 
+                    dim=1;
+                end
+                if dim==1
+                    idx2=idx+(0:size(x.values,2)-1)*size(x.values,1);
+                else
+                    idx2=(idx-1)*size(x.values,1)+(1:size(x.values,1))'; 
+                end
+                
+                x.derivatives = x.derivatives(idx2(:),:);
+            else
+                error('not coded yet')
+            end
             x.values = val;
-            x.derivatives = x.derivatives(idx,:);
+            
             varargout{1} = x;
             if nargout>1
                 varargout{2} = idx;
@@ -766,15 +842,17 @@ classdef AutoDiff
             elseif isa(x, 'AutoDiff')
                 r=reshape((1:numel(x.values)),size(x.values)).* ones(size(y));
                 z.values=x.values(r);
-                z.derivatives = sparse(1:numel(r),r,ones(size(r)))* x.derivatives;
+                z.derivatives = sparse(1:numel(r),r(:),ones(1,numel(r)))* x.derivatives;
                 z=AutoDiff(z);
             else
                 r=reshape((1:numel(x)),size(x)).* ones(size(y));
                 z=x(r);
             end
         end
-                
-        
+           
+        function n=ndims(x)
+            n = ndims(x.values);
+        end
         function z = times(x,y)
             if isa(x, 'AutoDiff')
                 if isa(y, 'AutoDiff')
@@ -844,15 +922,17 @@ classdef AutoDiff
                     
                     
                     for k=1:size(C,1)
-                        %dlambda(k)=V(i,k)*V(j,k)
+                        %dlambda(k,l)=V(i,k)*V(j,k)
                         dlambda(k,l)=V(:,k)'*Ap*V(:,k);
+                        
+                        
                         % B=[C-lambda(k)*eye(n,n);V(:,k)'];
                         % dV_dC(:,k,l)=(B'*B)^-1*B'*[dlambda(k)*V(:,k)-Ap*V(:,k);0];
                         dV_dC(:,k,l)=[C.values-lambda(k)*eye(n,n);V(:,k)']\[dlambda(k,l)*V(:,k)-Ap*V(:,k);0];
                         % [C-lambda(k)*eye(3,3)]*dV_dC(:,k,l)+-dlambda(k)*V
                         
                         
-                        n=size(C.values,1);
+                        %n=size(C.values,1);
                         %  k=1;
                         %
                         % (C.values-lambda(k)*eye(n))*V(:,k)
@@ -890,7 +970,7 @@ classdef AutoDiff
             t=reshape(1:numel(x.values),size(x.values));
             t=permute(t,l);
             x.values = permute(x.values,l);
-            x.derivatives=sparse(1:numel(t),t,ones(1,numel(t)))*x.derivatives;
+            x.derivatives=sparse(1:numel(t),t(:),ones(1,numel(t)))*x.derivatives;
             
         end
         
