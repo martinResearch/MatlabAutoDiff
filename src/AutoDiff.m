@@ -513,26 +513,20 @@ classdef AutoDiff
 
         function x = inv(x)
             x.values = inv(x.values);
-
             M1 = kron(speye(size(x.values, 2)), x.values);
             M2 = kron(x.values', speye(size(x.values, 1)));
-
             x.derivatives = -M2 * M1 * x.derivatives;
-
-
         end
 
         function z = mldivide(x, y)
             if isa(y, 'AutoDiff')
                 if isa(x, 'AutoDiff')
-
                     z.values = x.values \ y.values;
                     if size(y, 2) > 1
                         error('not yet implemented')
                     end
                     z.derivatives = x.values \ (y.derivatives - kron(z.values', speye(size(x, 1))) * x.derivatives);
                     z = AutoDiff(z);
-
 
                 else
                     z.values = x \ y.values;
@@ -547,7 +541,6 @@ classdef AutoDiff
                 end
                 z.derivatives = -x.values \ (kron(z.values', speye(size(x, 1))) * x.derivatives);
                 z = AutoDiff(z);
-
             end
         end
 
@@ -1041,7 +1034,7 @@ classdef AutoDiff
             if isscalar(a)
                 d = a;
             elseif issparse(a)
-                [t, v] = find(a(:));
+                [t, ~, v] = find(a(:));
                 n = numel(a);
                 d = sparse(t, t, v, n, n);
             else
