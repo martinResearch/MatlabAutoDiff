@@ -163,6 +163,15 @@ CheckAutoDiffJacobian(f, rand(3, 2), 1e-9);
 f = @(x) cumsum(x, 2);
 CheckAutoDiffJacobian(f, rand(3, 2, 4), 1e-9);
 
+f = @(x) cumsum(x, 2);
+CheckAutoDiffJacobian(f, rand(3, 2), 1e-9);
+
+f = @(x) cumsum(x);
+CheckAutoDiffJacobian(f, rand(3, 2), 1e-9);
+
+f = @(x) cumsum(x);
+CheckAutoDiffJacobian(f, rand(3), 1e-9);
+
 f = @(x) mean(x, 2);
 CheckAutoDiffJacobian(f, rand(3, 2, 4), 1e-9);
 
