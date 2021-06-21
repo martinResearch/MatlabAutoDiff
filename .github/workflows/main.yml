@@ -24,7 +24,6 @@ jobs:
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v2
-
-     - uses: joergbrech/moxunit-action@v1
-       with:
-         tests: src/AutoDiff_tests.m
+      - uses: joergbrech/moxunit-action@v1
+        with:
+          tests: src/AutoDiff_tests.m
