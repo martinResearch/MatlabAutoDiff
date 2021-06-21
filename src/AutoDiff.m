@@ -694,6 +694,31 @@ classdef AutoDiff
             end
         end
 
+        
+       function x = cumsum(x, varargin)
+            val = cumsum(x.values, varargin{:});
+ 
+            if isvector(x.values)
+                [k, l] = meshgrid(1:numel(x), 1:numel(x));
+                J = k<=l;
+                x.derivatives = J*x.derivatives;
+            else
+                if (nargin > 1) && isscalar(varargin{1})
+                    dim = varargin{1};
+                else
+                    dim = 1;
+                end                
+                [k, l] = meshgrid(1:size(x, dim), 1:size(x,dim));
+                Jv = k<=l;
+                sz = size(x.values);
+                prodsz1 = prod(sz(1:dim-1));
+                prodsz2 = prod(sz(dim+1:end));
+                J = kron(speye(prodsz2), kron(Jv,speye(prodsz1)));
+                x.derivatives = J*x.derivatives;
+            end
+            x.values = val;
+        end
+        
         function varargout = sort(x, varargin)
             [val, idx] = sort(x.values, varargin{:});
 

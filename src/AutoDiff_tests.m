@@ -160,6 +160,9 @@ CheckAutoDiffJacobian(f, rand(3, 2, 4), 1e-9);
 f = @(x) sum(x, 2);
 CheckAutoDiffJacobian(f, rand(3, 2), 1e-9);
 
+f = @(x) cumsum(x, 2);
+CheckAutoDiffJacobian(f, rand(3, 2, 4), 1e-9);
+
 f = @(x) mean(x, 2);
 CheckAutoDiffJacobian(f, rand(3, 2, 4), 1e-9);
 
@@ -168,7 +171,7 @@ CheckAutoDiffJacobian(f, rand(3, 2, 4), 1e-9);
 
 %times
 f = @(x) x .* abs(x);
-CheckAutoDiffJacobian(f, randn(3, 2, 4), 1e-9);
+CheckAutoDiffJacobian(f, randn(3, 2, 4), 2e-9);
 t = randn(3, 2, 4);
 f = @(x) x .* t;
 CheckAutoDiffJacobian(f, randn(3, 2, 4), 1e-9);
