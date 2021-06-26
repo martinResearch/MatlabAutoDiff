@@ -79,6 +79,9 @@ CheckAutoDiffJacobian(f, rand(4, 3), 1e-9);
 f = @(x) diff(x, 1, 1);
 CheckAutoDiffJacobian(f, rand(4, 3), 1e-9);
 
+f = @(x) diff(x, 1, 3);
+CheckAutoDiffJacobian(f, rand(4, 3, 5, 2), 1e-9);
+
 f = @(x) x(:, end);
 CheckAutoDiffJacobian(f, rand(4, 3), 1e-9);
 f = @(x) x(end, :);
@@ -118,7 +121,7 @@ f = @(x) x.^2;
 CheckAutoDiffJacobian(f, rand(3, 2), 1e-9);
 
 f = @(x) inv(x);
-CheckAutoDiffJacobian(f, randn(3, 3), 1e-9);
+CheckAutoDiffJacobian(f, randn(3, 3), 1e-7);
 
 f = @(x) x / x(2, 2);
 CheckAutoDiffJacobian(f, rand(3, 2), 1e-7);

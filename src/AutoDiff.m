@@ -271,36 +271,21 @@ classdef AutoDiff
             if n ~= 1
                 error('not yet coded')
             end
-
-            t = reshape(1:numel(x.values), size(x.values));
             if issparse(x.values)
                 warning('AutoDiff:Inefficient', 'this implementation is quite inefficent')
             end
+            
+            s = size(x.values);
+            t = reshape(1:numel(x.values), [prod(s(1:dim-1)),s(dim), prod(s(dim+1:end))]);
+           
 
-            if ndims(x.values) ~= 2
-                error('not yet coded')
-            end
-
-            if dim == 1
-
-                tsub1 = t(2:end, :);
-                tsub2 = t(1:end-1, :);
-                D = sparse(1:numel(tsub1), tsub1(:)', ones(1, numel(tsub1)), numel(tsub1), size(x.derivatives, 1)) - ...
-                    sparse(1:numel(tsub2), tsub2(:)', ones(1, numel(tsub2)), numel(tsub1), size(x.derivatives, 1));
-                x.values = reshape(D*x.values(:), size(tsub1));
-                x.derivatives = D * x.derivatives;
-
-            elseif dim == 2
-
-                tsub1 = t(:, 2:end, :);
-                tsub2 = t(:, 1:end-1);
-                D = sparse(1:numel(tsub1), tsub1(:)', ones(1, numel(tsub1)), numel(tsub1), size(x.derivatives, 1)) - ...
-                    sparse(1:numel(tsub2), tsub2(:)', ones(1, numel(tsub2)), numel(tsub2), size(x.derivatives, 1));
-                x.values = reshape(D*x.values(:), size(tsub1));
-                x.derivatives = D * x.derivatives;
-            else
-                error('not yet coded')
-            end
+            tsub1 = t(:, 2:end, :);
+            tsub2 = t(:, 1:end-1, :);
+            D = sparse(1:numel(tsub1), tsub1(:)', ones(1, numel(tsub1)), numel(tsub1), size(x.derivatives, 1)) - ...
+                sparse(1:numel(tsub2), tsub2(:)', ones(1, numel(tsub2)), numel(tsub1), size(x.derivatives, 1));
+            s(dim) = s(dim)-1;
+            x.values = reshape(D*x.values(:), s);
+            x.derivatives = D * x.derivatives;
 
         end
 
