@@ -189,18 +189,7 @@ a = randn(2, 3);
 f = @(x) a * x ;
 CheckAutoDiffJacobian(f, randn(3, 3), 1e-7);
 
-% addition
-
-f = @(x) x + x;
-CheckAutoDiffJacobian(f, randn(3, 3), 1e-7);
-
-a = randn(3, 3);
-f = @(x) x + a;
-CheckAutoDiffJacobian(f, randn(3, 3), 1e-7);
-
-a = randn(3, 3);
-f = @(x) a + x ;
-CheckAutoDiffJacobian(f, randn(3, 3), 1e-7);
+% 
 
 f = @(x) inv(x);
 CheckAutoDiffJacobian(f, randn(3, 3), 1e-7);
@@ -231,27 +220,17 @@ CheckAutoDiffJacobian(f, rand(3, 2), 1e-9);
 f = @(x) reshape(x, 3, 2);
 CheckAutoDiffJacobian(f, rand(3, 2), 1e-9);
 
-f = @(x) sort(x);
-CheckAutoDiffJacobian(f, rand(3, 2), 1e-9);
-
 f = @(x) sort(x, 1);
 CheckAutoDiffJacobian(f, rand(3, 2), 1e-9);
-
 f = @(x) sort(x, 2);
 CheckAutoDiffJacobian(f, rand(3, 2), 1e-9);
 
-f = @(x) sort(x);
-CheckAutoDiffJacobian(f, rand(3, 1), 1e-9);
 
 f = @(x) x(3, :, :);
 CheckAutoDiffJacobian(f, rand(3, 2, 4), 1e-9);
 
 f = @(x) x(:, 2, :);
 CheckAutoDiffJacobian(f, rand(3, 2, 4), 1e-9);
-
-f = @(x) sum(x);
-CheckAutoDiffJacobian(f, rand(3, 1), 1e-9)
-CheckAutoDiffJacobian(f, rand(1, 3), 1e-9)
 
 f = @(x) sum(x, 2);
 CheckAutoDiffJacobian(f, rand(3, 2), 1e-9);

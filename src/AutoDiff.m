@@ -389,11 +389,12 @@ classdef AutoDiff
         end
 
 
-        function [m, id] = max(C, varagin)
+        function [m, id] = max(C, B)
             if nargin == 1
                 if isvector(C.values)
                     [~, id] = max(C.values);
-                    m = AutoDiff(C.values(id), C.derivatives(id, :));
+                    m.values = C.values(id);
+                    m.derivatives = C.derivatives(id, :);       
                 else
                     [v, id] = max(C.values);
                     id2 = id(:)' + (0:numel(id) - 1) * size(C.values, 1);
@@ -401,8 +402,7 @@ classdef AutoDiff
                     tmp = sparse(1:numel(id2), id2(:)', ones(1, numel(id2)), numel(id2), size(C.derivatives, 1));
                     m.derivatives = tmp * C.derivatives;
                 end
-            elseif nargin == 2
-                B = varagin(1);
+            elseif nargin == 2                
                 if isa(C, 'AutoDiff')
                     if isa(B, 'AutoDiff')
                         m.values = max(C.values, B.values);
@@ -424,11 +424,12 @@ classdef AutoDiff
             m = AutoDiff(m);
         end
 
-        function [m, id] = min(C, varagin)
+        function [m, id] = min(C, B)
             if nargin == 1
                 if isvector(C.values)
                     [~, id] = min(C.values);
-                    m = AutoDiff(C.values(id), C.derivatives(id, :));
+                    m.values = C.values(id);
+                    m.derivatives = C.derivatives(id, :);
                 else
                     [v, id] = min(C.values);
                     id2 = id(:)' + (0:numel(id) - 1) * size(C.values, 1);
@@ -436,8 +437,7 @@ classdef AutoDiff
                     tmp = sparse(1:numel(id2), id2(:)', ones(1, numel(id2)), numel(id2), size(C.derivatives, 1));
                     m.derivatives = tmp * C.derivatives;
                 end
-            elseif nargin == 2
-                B = varagin(1);
+            elseif nargin == 2                
                 if isa(C, 'AutoDiff')
                     if isa(B, 'AutoDiff')
                         m.values = min(C.values, B.values);
@@ -625,7 +625,7 @@ classdef AutoDiff
                     x.values = temp;
                 else
                     y.values = x.^y.values;
-                    y.derivatives = AutoDiff. valXder(y.values.*log(x), y.derivatives);
+                    y.derivatives = AutoDiff.spdiag(y.values.*log(x))* y.derivatives;
                     x = y;
                 end
             else
