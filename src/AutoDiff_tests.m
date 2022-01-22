@@ -1,7 +1,23 @@
 rng(1)
 
+if ~exist('pagemtimes')
+    addpath("./backports")    
+end
+y = randn(2, 4, 1);
+f = @(x) pagemtimes(x, y);
+CheckAutoDiffJacobian(f, randn(3, 2, 1), 1e-9);
 
+x = randn(3, 2, 1);
+f = @(y) pagemtimes(x,y);
+CheckAutoDiffJacobian(f, randn(2, 4, 1), 1e-9);
 
+x = randn(3, 2, 7);
+f = @(y) pagemtimes(x,y);
+CheckAutoDiffJacobian(f, randn(2, 5, 7), 1e-9);
+
+y = randn(2, 5, 7, 2);
+f = @(x) pagemtimes(x, y);
+CheckAutoDiffJacobian(f, randn(3, 2, 7, 2), 1e-9);
 
 f = @(x) norm(x);
 CheckAutoDiffJacobian(f, rand(1, 3), 1e-9);
@@ -47,7 +63,7 @@ f = @(x) acos(x);
 CheckAutoDiffJacobian(f, rand(2, 3), 1e-9);
 
 f = @(x) asin(x);
-CheckAutoDiffJacobian(f, rand(2, 3), 1e-9);
+CheckAutoDiffJacobian(f, rand(2, 3), 1e-8);
 
 f = @(x) atan(x);
 CheckAutoDiffJacobian(f, rand(2, 3), 1e-9);

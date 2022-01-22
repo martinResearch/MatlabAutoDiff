@@ -27,7 +27,6 @@
 % of the authors and should not be interpreted as representing official policies,
 % either expressed or implied, of the FreeBSD Project.
 
-
 classdef AutoDiff
 
     %
@@ -563,6 +562,62 @@ classdef AutoDiff
             end
         end
 
+        function z = pagemtimes(x, y)
+
+            if (numel(x) == 1) || (numel(y) == 1)
+                z = x .* y;
+                return;
+            end
+            
+            if isa(y, 'AutoDiff')
+                size_y = size(y.values);
+            else
+                size_y = size(y);
+            end
+            if isa(x, 'AutoDiff')
+                size_x = size(x.values);
+            else
+                size_x = size(x);
+            end 
+            if ndims(x)~=ndims(y)
+                error('not yet implemented')
+            end
+            if any(size_y(3:end)~=size_y(3:end))
+                error('not yet implemented')
+            end
+            
+            if isa(x, 'AutoDiff')
+                s=prod(size_y(3:end));
+                [i,j,k,l]=ndgrid(1:size_x(1),1:size_x(2),1:size_y(2),1:s);                    
+                i2 = i+(k-1)*size_x(1)+(l-1)*size_x(1)*size_y(2);
+                j2 = i+(j-1)*size_x(1)+(l-1)*size_x(1)*size_x(2);
+                v=repmat(reshape(y,1,size_y(1),size_y(2),prod(size_y(3:end))),size_x(1),1,1,1);
+                My=sparse(i2(:),j2(:),v(:));
+            end
+            if isa(y, 'AutoDiff')
+                s=prod(size_x(3:end));
+                [i,j,k,l]=ndgrid(1:size_x(1),1:size_y(1),1:size_y(2),1:s);                    
+                j2 = j+(k-1)*size_y(1)+(l-1)*size_y(1)*size_y(2);
+                i2 = i+(k-1)*size_x(1)+(l-1)*size_x(1)*size_y(2);
+                v=repmat(reshape(x,size_x(1),size_x(2),prod(size_x(3:end))),1,size_y(2),1);
+                Mx=sparse(i2(:),j2(:),v(:)); 
+            end
+            if isa(x, 'AutoDiff')
+                if isa(y, 'AutoDiff')
+                    z.values = pagemtimes(x.values,y.values);                 
+                    z.derivatives = Mx * y.derivatives + My * x.derivatives;
+                else
+                    z.values = pagemtimes(x.values,y);
+                    z.derivatives = My * x.derivatives;
+                end
+            else
+                z.values = pagemtimes(x,y.values);          
+                z.derivatives = Mx * y.derivatives;
+            end
+            z = AutoDiff(z.values, z.derivatives);            
+        end
+        
+        
         function z = mrdivide(x, y)
             if (numel(y) == 1)
                 z = x ./ y;
