@@ -571,27 +571,49 @@ classdef AutoDiff
             
             if isa(y, 'AutoDiff')
                 size_y = size(y.values);
+                y_values = y.values;
             else
                 size_y = size(y);
+                y_values = y;
             end
             if isa(x, 'AutoDiff')
                 size_x = size(x.values);
+                x_values = x.values;
             else
                 size_x = size(x);
+                x_values = x;
             end 
-            if ndims(x)~=ndims(y)
-                error('not yet implemented')
+            if ndims(x)~=ndims(y)|| any(size_x(3:end)~=size_y(3:end))
+                new_size_x= size_y;
+                new_size_x(1)=size(x,1);
+                new_size_x(2)=size(x,2);
+                if isa(x, 'AutoDiff')     
+                    x = repmat_to_size(x, new_size_x);
+                    x_values = x.values;
+                else
+                    x = x.* ones(new_size_x);
+                    x_values = x;
+                end
+                new_size_y= size_x;
+                new_size_y(1)=size_y(1);
+                new_size_y(2)=size_y(2);
+                if isa(y, 'AutoDiff')
+                    y = repmat_to_size(y,new_size_y);
+                    y_values = y.values;
+                else
+                    y = y.* ones(new_size_x);
+                    y_values = y;
+                end               
+                size_x = size(x);
+                size_y = size(y);
             end
-            if any(size_y(3:end)~=size_y(3:end))
-                error('not yet implemented')
-            end
-            
+      
             if isa(x, 'AutoDiff')
                 s=prod(size_y(3:end));
                 [i,j,k,l]=ndgrid(1:size_x(1),1:size_x(2),1:size_y(2),1:s);                    
                 i2 = i+(k-1)*size_x(1)+(l-1)*size_x(1)*size_y(2);
                 j2 = i+(j-1)*size_x(1)+(l-1)*size_x(1)*size_x(2);
-                v=repmat(reshape(y,1,size_y(1),size_y(2),prod(size_y(3:end))),size_x(1),1,1,1);
+                v=repmat(reshape(y_values,1,size_y(1),size_y(2),prod(size_y(3:end))),size_x(1),1,1,1);
                 My=sparse(i2(:),j2(:),v(:));
             end
             if isa(y, 'AutoDiff')
@@ -599,7 +621,7 @@ classdef AutoDiff
                 [i,j,k,l]=ndgrid(1:size_x(1),1:size_y(1),1:size_y(2),1:s);                    
                 j2 = j+(k-1)*size_y(1)+(l-1)*size_y(1)*size_y(2);
                 i2 = i+(k-1)*size_x(1)+(l-1)*size_x(1)*size_y(2);
-                v=repmat(reshape(x,size_x(1),size_x(2),prod(size_x(3:end))),1,size_y(2),1);
+                v=repmat(reshape(x_values,size_x(1),size_x(2),prod(size_x(3:end))),1,size_y(2),1);
                 Mx=sparse(i2(:),j2(:),v(:)); 
             end
             if isa(x, 'AutoDiff')
@@ -899,17 +921,32 @@ classdef AutoDiff
             end
             x = sum(x, dim) / s(dim);
         end
-
-        function z = repmat_as(x, y)
-            if (ndims(x) == ndims(y)) && all(size(x) == size(y))
+    
+        function z = repmat_to_size(x, target_size)
+            if (ndims(x) == numel(target_size)) && all(size(x) ==target_size)
                 z = x;
             elseif isa(x, 'AutoDiff')
-                r = reshape((1:numel(x.values)), size(x.values)) .* ones(size(y));
+                r = reshape((1:numel(x.values)), size(x.values)) .* ones(target_size);
                 z.values = x.values(r);
                 z.derivatives = sparse(1:numel(r), r(:), ones(1, numel(r))) * x.derivatives;
                 z = AutoDiff(z);
             else
-                r = reshape((1:numel(x)), size(x)) .* ones(size(y));
+                r = reshape((1:numel(x)), size(x)) .* ones(target_size);
+                z = x(r);
+            end
+        end
+            
+        function z = repmat_as(x, y)
+            target_size = size(y); 
+            if (ndims(x) == numel(target_size)) && all(size(x) ==target_size)
+                z = x;
+            elseif isa(x, 'AutoDiff')
+                r = reshape((1:numel(x.values)), size(x.values)) .* ones(target_size);
+                z.values = x.values(r);
+                z.derivatives = sparse(1:numel(r), r(:), ones(1, numel(r))) * x.derivatives;
+                z = AutoDiff(z);
+            else
+                r = reshape((1:numel(x)), size(x)) .* ones(target_size);
                 z = x(r);
             end
         end

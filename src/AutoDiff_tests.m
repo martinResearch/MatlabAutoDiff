@@ -9,6 +9,19 @@ end
 if ~exist('pagemtimes')
     addpath("./backports")    
 end
+
+x = randn(3, 2, 7);
+f = @(y) pagemtimes(x,y);
+CheckAutoDiffJacobian(f, randn(2, 5, 1), 1e-9);
+
+x = randn(3, 2, 1);
+f = @(y) pagemtimes(x,y);
+CheckAutoDiffJacobian(f, randn(2, 5, 7), 1e-9);
+
+x = randn(3, 2, 1, 3);
+f = @(y) pagemtimes(x,y);
+CheckAutoDiffJacobian(f, randn(2, 5, 7, 1), 1e-9);
+
 y = randn(2, 4, 1);
 f = @(x) pagemtimes(x, y);
 CheckAutoDiffJacobian(f, randn(3, 2, 1), 1e-9);
@@ -17,6 +30,10 @@ x = randn(3, 2, 1);
 f = @(y) pagemtimes(x,y);
 CheckAutoDiffJacobian(f, randn(2, 4, 1), 1e-9);
 
+x = randn(3, 2, 1);
+f = @(y) pagemtimes(x,y);
+CheckAutoDiffJacobian(f, randn(2, 5, 5), 1e-9);
+
 x = randn(3, 2, 7);
 f = @(y) pagemtimes(x,y);
 CheckAutoDiffJacobian(f, randn(2, 5, 7), 1e-9);
@@ -24,6 +41,10 @@ CheckAutoDiffJacobian(f, randn(2, 5, 7), 1e-9);
 y = randn(2, 5, 7, 2);
 f = @(x) pagemtimes(x, y);
 CheckAutoDiffJacobian(f, randn(3, 2, 7, 2), 1e-9);
+
+f = @(x) pagemtimes(x,x);
+CheckAutoDiffJacobian(f, randn(3, 3, 5), 1e-9);
+
 
 f = @(x) norm(x);
 CheckAutoDiffJacobian(f, rand(1, 3), 1e-9);
