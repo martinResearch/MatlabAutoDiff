@@ -1088,13 +1088,9 @@ classdef AutoDiff
 
 
         function y = det(x)
-            if all(size(x) == [2, 2])
-                y.values = det(x.values);
-                y.derivatives = [x.values(2, 2), -x.values(1, 2), -x.values(2, 1), x.values(1, 1)] * x.derivatives;
-                y = AutoDiff(y.values, y.derivatives);
-            else
-                error('not yet coded')
-            end
+            y.values = det(x.values);
+            y.derivatives = det(x.values).*inv(x.values)';
+            y = AutoDiff(y.values, y.derivatives);
         end
 
         function y = vertcat(varargin)
