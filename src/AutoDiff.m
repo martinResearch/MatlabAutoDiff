@@ -1089,7 +1089,7 @@ classdef AutoDiff
 
         function y = det(x)
             y.values = det(x.values);
-            y.derivatives = det(x.values).*inv(x.values)';
+            y.derivatives = reshape(det(x.values).*inv(x.values)',1,[]) * x.derivatives;
             y = AutoDiff(y.values, y.derivatives);
         end
 
