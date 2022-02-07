@@ -223,7 +223,7 @@ classdef AutoDiff
         function x = repmat(x, varargin)
             r = repmat(reshape((1:numel(x.values)), size(x.values)), varargin{:});
             x.values = x.values(r);
-            x.derivatives = sparse(1:numel(r), r, ones(size(r))) * x.derivatives;
+            x.derivatives = sparse(1:numel(r), r(:), ones(numel(r),1)) * x.derivatives;
         end
 
         function x = ctranspose(x)

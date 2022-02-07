@@ -10,6 +10,7 @@ if ~exist('pagemtimes')
     addpath("./backports")    
 end
 
+
 x = randn(3, 2, 7);
 f = @(y) pagemtimes(x,y);
 CheckAutoDiffJacobian(f, randn(2, 5, 1), 1e-9);
@@ -55,8 +56,13 @@ CheckAutoDiffJacobian(f, [-0.2818003 ,  0.00971297, -0.00271337], 1e-9)
 f = @(x) repmat(x, [3, 2]);
 CheckAutoDiffJacobian(f, rand(2, 3), 1e-9);
 
+f = @(x) repmat(x, 1, 1, 10);
+CheckAutoDiffJacobian(f, ones(3,3), 1e-9);
+
 f = @(x) x(:);
 CheckAutoDiffJacobian(f, rand(2, 3), 1e-9);
+
+
 
 %testing compatible size multiplication (i.e. using broadcasting)
 f = @(x) x .* [3, 4, 2];
