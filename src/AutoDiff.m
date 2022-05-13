@@ -93,6 +93,11 @@ classdef AutoDiff
         end
 
 
+        function x = sinh(x)
+            x.derivatives = AutoDiff.spdiag(cosh(x.values)) * x.derivatives;
+            x.values = sinh(x.values);
+        end
+
         function x = abs(x)
             x.derivatives = AutoDiff.spdiag(sign(x.values)) * x.derivatives;
             x.values = abs(x.values);
