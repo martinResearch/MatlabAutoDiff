@@ -92,7 +92,11 @@ classdef AutoDiff
                 'Note that vectorizing your code is likely to avoid the preallocation is likely to lead to faster execution']);
         end
 
-
+        function x = sinh(x)
+            x.derivatives = AutoDiff.spdiag(cosh(x.values)) * x.derivatives;
+            x.values = sinh(x.values);
+        end
+        
         function x = abs(x)
             x.derivatives = AutoDiff.spdiag(sign(x.values)) * x.derivatives;
             x.values = abs(x.values);
