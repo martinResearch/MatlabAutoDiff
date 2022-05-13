@@ -412,6 +412,15 @@ CheckAutoDiffJacobian(f, rand(3, 3), 1e-9);
 f = @(x) acosh(x);
 CheckAutoDiffJacobian(f, rand(4, 4), 1e-9);
 
+f = @(x) atanh(x);
+CheckAutoDiffJacobian(f, rand(2, 2), 1e-9);
+
+f = @(x) atanh(x);
+CheckAutoDiffJacobian(f, rand(3, 3), 1e-9);
+
+f = @(x) atanh(x);
+CheckAutoDiffJacobian(f, rand(4, 4), 1e-9);
+
 % some other tests
 
 n = 300;
