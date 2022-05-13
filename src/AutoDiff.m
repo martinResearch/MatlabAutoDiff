@@ -46,6 +46,7 @@ classdef AutoDiff
     properties
         values
         derivatives_1st
+        derivatives_2nd
     end
 
     methods
