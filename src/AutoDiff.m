@@ -108,6 +108,11 @@ classdef AutoDiff
             x.values = asinh(x.values);
         end
 
+        function x = acosh(x)
+            x.derivatives = AutoDiff.spdiag(1./sqrt((x.values).^2-1)) * x.derivatives;
+            x.values = acosh(x.values);
+        end
+
         function x = abs(x)
             x.derivatives = AutoDiff.spdiag(sign(x.values)) * x.derivatives;
             x.values = abs(x.values);
