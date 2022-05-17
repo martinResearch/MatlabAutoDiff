@@ -376,6 +376,51 @@ CheckAutoDiffJacobian(f, randn(3, 3), 1e-8)
 f = @(x) det(x);
 CheckAutoDiffJacobian(f, randn(4, 4), 1e-9);
 
+f = @(x) sinh(x);
+CheckAutoDiffJacobian(f, randn(2, 2), 1e-9);
+
+f = @(x) sinh(x);
+CheckAutoDiffJacobian(f, randn(3, 3), 1e-9);
+
+f = @(x) sinh(x);
+CheckAutoDiffJacobian(f, randn(4, 4), 1e-9);
+
+f = @(x) cosh(x);
+CheckAutoDiffJacobian(f, randn(2, 2), 1e-9);
+
+f = @(x) cosh(x);
+CheckAutoDiffJacobian(f, randn(3, 3), 1e-9);
+
+f = @(x) cosh(x);
+CheckAutoDiffJacobian(f, randn(4, 4), 1e-9);
+
+f = @(x) asinh(x);
+CheckAutoDiffJacobian(f, randn(2, 2), 1e-9);
+
+f = @(x) asinh(x);
+CheckAutoDiffJacobian(f, randn(3, 3), 1e-9);
+
+f = @(x) asinh(x);
+CheckAutoDiffJacobian(f, randn(4, 4), 1e-9);
+
+f = @(x) acosh(x);
+CheckAutoDiffJacobian(f, randn(2, 2), 1e-9);
+
+f = @(x) acosh(x);
+CheckAutoDiffJacobian(f, rand(3, 3), 1e-9);
+
+f = @(x) acosh(x);
+CheckAutoDiffJacobian(f, rand(4, 4), 1e-9);
+
+f = @(x) atanh(x);
+CheckAutoDiffJacobian(f, rand(2, 2), 1e-9);
+
+f = @(x) atanh(x);
+CheckAutoDiffJacobian(f, rand(3, 3), 1e-9);
+
+f = @(x) atanh(x);
+CheckAutoDiffJacobian(f, rand(4, 4), 1e-9);
+
 % some other tests
 
 n = 300;
