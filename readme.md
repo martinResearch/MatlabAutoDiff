@@ -1,7 +1,6 @@
 # Goal
 
-This project implements a Matlab/Octave forward automatic differentiation method, ([wikipedia definition here](https://en.wikipedia.org/wiki/Automatic_differentiation#Forward_accumulation)) based
- on operator overloading. This does not provide backward mode or higher order derivatives. It enables precise and efficient computation of the Jacobian of a function. This contrasts with numerical differentiation (a.k.a finite differences) that is unprecise due to roundoff errors and that cannot exploit the sparsity of the derivatives.
+This project implements a Matlab/Octave non-intrusive forward automatic differentiation method, ([wikipedia definition here](https://en.wikipedia.org/wiki/Automatic_differentiation#Forward_accumulation)) based on operator overloading. This does not provide backward mode or higher order derivatives. It enables precise and efficient computation of the Jacobian of a function. This contrasts with numerical differentiation (a.k.a finite differences) that is unprecise due to roundoff errors and that cannot exploit the sparsity of the derivatives.
 
 In contrast with most existing automatic differentiation Matlab toolboxes:
 
@@ -162,8 +161,9 @@ more examples can be found in [./src/AutoDiffExamples.m](./src/examplesSmall.m)
 * [AD_deriv](https://github.com/jborggaard/AD_Deriv) by Jeff Borggaard
   works only with scalars at the date of july 2016 (no vector , matrices and NDarrays)
 
-* [Sparsegrad](https://pypi.org/project/sparsegrad/) by Marek Szymanski. Python. automatically and efficiently calculates analytical sparse Jacobian of arbitrary numpy vector valued functions. Does not support ND arrays yet in August 2019.
+* [Sparsegrad](https://pypi.org/project/sparsegrad/) by Marek Szymanski. Python. Automatically and efficiently calculates analytical sparse Jacobian of arbitrary numpy vector valued functions. Does not support ND arrays yet in August 2019.
 
+* [PTNobel/AutoDiff](https://github.com/PTNobel/AutoDiff) By Part Nobel. Python. Non-intrusive Forward differentiation with sparse Jacobians support.
 
 ## References
 
