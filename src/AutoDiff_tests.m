@@ -11,6 +11,25 @@ if ~exist('pagemtimes')
 end
 
 
+
+f = @(x) cat(2, [], x)
+CheckAutoDiffJacobian(f, randn(3,3), 1e-9);
+
+f = @(x) cat(3, [], x)
+CheckAutoDiffJacobian(f, randn(3,3), 1e-9);
+
+f = @(x) cat(3, [],[], x)
+CheckAutoDiffJacobian(f, randn(3,3), 1e-9);
+
+f = @(x) cat(3, x, [])
+CheckAutoDiffJacobian(f, randn(3,3), 1e-9);
+
+f = @(x) cat(4, [], x)
+CheckAutoDiffJacobian(f, randn(3,3), 1e-9);
+
+f = @(x) cat(4, x,[])
+CheckAutoDiffJacobian(f, randn(3,3), 1e-9);
+
 x = randn(3, 2, 7);
 f = @(y) pagemtimes(x,y);
 CheckAutoDiffJacobian(f, randn(2, 5, 1), 1e-9);
@@ -41,7 +60,7 @@ CheckAutoDiffJacobian(f, randn(2, 5, 7), 1e-9);
 
 y = randn(2, 5, 7, 2);
 f = @(x) pagemtimes(x, y);
-CheckAutoDiffJacobian(f, randn(3, 2, 7, 2), 1e-9);
+CheckAutoDiffJacobian(f, randn(3, 2, 7, 2), 1e-8);
 
 f = @(x) pagemtimes(x,x);
 CheckAutoDiffJacobian(f, randn(3, 3, 5), 1e-9);
@@ -251,7 +270,7 @@ f = @(x) a + x ;
 CheckAutoDiffJacobian(f, randn(3, 3), 1e-7);
 
 f = @(x) inv(x);
-CheckAutoDiffJacobian(f, randn(3, 3), 1e-6);
+CheckAutoDiffJacobian(f, [[1,2,3];[3,1,2];[0,4,5]], 1e-6);
 
 f = @(x) x / x(2, 2);
 CheckAutoDiffJacobian(f, rand(3, 2), 1e-7);

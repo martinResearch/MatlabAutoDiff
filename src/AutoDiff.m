@@ -187,7 +187,9 @@ classdef AutoDiff
             for i = 1:nbvarargin
                 x = varargin{i};
                 if ~isa(x, 'AutoDiff')
-                    y.values = cat(dim, y.values, x);
+                    if ~isempty(x)
+                        y.values = cat(dim, y.values, x);
+                    end
                 else
                     y.values = cat(dim, y.values, x.values);
                     if nderivs ~= size(x.derivatives, 2)
@@ -199,10 +201,11 @@ classdef AutoDiff
             nvars = numel(y.values);
             y.derivatives = sparse(nvars, nderivs);
             sy = size(y.values);
+            sy(numel(sy)+1:dim+1) = 1;
             nr = 1;
 
             for i = 1:nbvarargin
-                x = varargin{i};
+                x = varargin{i};                
                 if isa(x, 'AutoDiff')
                     sx = size(x.values);
                     sx(numel(sx)+1:dim+1) = 1;
