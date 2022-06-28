@@ -10,24 +10,32 @@ if ~exist('pagemtimes')
     addpath("./backports")    
 end
 
+% to be fixed
+% f = @(x) diff(x, 1, 3);
+% CheckAutoDiffJacobian(f, randn(2,2), 1e-9);
 
+f = @(x) sum(x,3);
+CheckAutoDiffJacobian(f, randn(2,2), 1e-9);
 
-f = @(x) cat(2, [], x)
+f = @(x) mean(x,3);
+CheckAutoDiffJacobian(f, randn(2,2), 1e-9);
+
+f = @(x) cat(2, [], x);
 CheckAutoDiffJacobian(f, randn(3,3), 1e-9);
 
-f = @(x) cat(3, [], x)
+f = @(x) cat(3, [], x);
 CheckAutoDiffJacobian(f, randn(3,3), 1e-9);
 
-f = @(x) cat(3, [],[], x)
+f = @(x) cat(3, [],[], x);
 CheckAutoDiffJacobian(f, randn(3,3), 1e-9);
 
-f = @(x) cat(3, x, [])
+f = @(x) cat(3, x, []);
 CheckAutoDiffJacobian(f, randn(3,3), 1e-9);
 
-f = @(x) cat(4, [], x)
+f = @(x) cat(4, [], x);
 CheckAutoDiffJacobian(f, randn(3,3), 1e-9);
 
-f = @(x) cat(4, x,[])
+f = @(x) cat(4, x,[]);
 CheckAutoDiffJacobian(f, randn(3,3), 1e-9);
 
 x = randn(3, 2, 7);
@@ -273,7 +281,7 @@ f = @(x) inv(x);
 CheckAutoDiffJacobian(f, [[1,2,3];[3,1,2];[0,4,5]], 1e-6);
 
 f = @(x) x / x(2, 2);
-CheckAutoDiffJacobian(f, rand(3, 2), 1e-7);
+CheckAutoDiffJacobian(f, rand(3, 2), 1e-6);
 
 f = @(x) x / 3;
 CheckAutoDiffJacobian(f, rand(3, 2), 1e-9);
@@ -402,7 +410,7 @@ f = @(x) sinh(x);
 CheckAutoDiffJacobian(f, randn(3, 3), 1e-9);
 
 f = @(x) sinh(x);
-CheckAutoDiffJacobian(f, randn(4, 4), 1e-9);
+CheckAutoDiffJacobian(f, randn(4, 4), 1e-8);
 
 f = @(x) cosh(x);
 CheckAutoDiffJacobian(f, randn(2, 2), 1e-9);
@@ -423,10 +431,10 @@ f = @(x) asinh(x);
 CheckAutoDiffJacobian(f, randn(4, 4), 1e-9);
 
 f = @(x) acosh(x);
-CheckAutoDiffJacobian(f, randn(2, 2), 1e-9);
+CheckAutoDiffJacobian(f, randn(2, 2), 1e-8);
 
 f = @(x) acosh(x);
-CheckAutoDiffJacobian(f, rand(3, 3), 1e-9);
+CheckAutoDiffJacobian(f, rand(3, 3), 1e-8);
 
 f = @(x) acosh(x);
 CheckAutoDiffJacobian(f, rand(4, 4), 1e-9);

@@ -300,11 +300,10 @@ classdef AutoDiff
             if issparse(x.values)
                 warning('AutoDiff:Inefficient', 'this implementation is quite inefficent')
             end
-            
             s = size(x.values);
+          
             t = reshape(1:numel(x.values), [prod(s(1:dim-1)),s(dim), prod(s(dim+1:end))]);
            
-
             tsub1 = t(:, 2:end, :);
             tsub2 = t(:, 1:end-1, :);
             D = sparse(1:numel(tsub1), tsub1(:)', ones(1, numel(tsub1)), numel(tsub1), size(x.derivatives, 1)) - ...
@@ -926,14 +925,17 @@ classdef AutoDiff
                 else
                     dim = 1;
                 end
+            end            
+            
+            if dim<=ndims(x.values) 
+                sx = size(x.values);
+                nin = numel(x.values);
+                x.values = sum(x.values, dim);
+                nout = numel(x.values);
+                r = ones(sx(dim), 1) * (1:nout);
+                c = permute(reshape(1:nin, sx), [dim, 1:dim - 1, dim + 1:numel(sx)]);
+                x.derivatives = sparse(r(:), c(:), ones(1, nin), nout, nin) * x.derivatives;
             end
-            sx = size(x.values);
-            nin = numel(x.values);
-            x.values = sum(x.values, dim);
-            nout = numel(x.values);
-            r = ones(sx(dim), 1) * (1:nout);
-            c = permute(reshape(1:nin, sx), [dim, 1:dim - 1, dim + 1:numel(sx)]);
-            x.derivatives = sparse(r(:), c(:), ones(1, nin), nout, nin) * x.derivatives;
         end
 
         function x = mean(x, dim)
@@ -946,7 +948,9 @@ classdef AutoDiff
                     dim = 1;
                 end
             end
-            x = sum(x, dim) / s(dim);
+            if dim<=ndims(x.values) 
+                x = sum(x, dim) / s(dim);
+            end
         end
     
         function z = repmat_to_size(x, target_size)

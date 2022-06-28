@@ -1,12 +1,10 @@
 function CheckAutoDiffJacobian(func, x, tol)
 % check the function is deterministic
 
-f1=func(x);
-f2=func(x);
-assert (all(size(f1)==size(f2)));
-if ~isempty(f1)
-    assert(maxabsdiff(f1, f2) == 0);
-end
+f1=func(x)
+f2=func(x)
+if prod(size(f1))==0
+assert(maxabsdiff(, func(x)) == 0)
 % check jacobian
 [J2, f2] = AutoDiffJacobianFiniteDiff(func, x, 1:numel(x), []);
 [J1, f1] = AutoDiffJacobianAutoDiff(func, x);
