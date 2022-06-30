@@ -160,8 +160,17 @@ classdef AutoDiff
         function y = floor(x)
             y = floor(x.values);
         end
+        
+        function x = real(x)
+            x.derivatives = real(x.derivatives)
+            x.values = real(x.values);
+        end
 
-
+        function x = imag(x)
+            x.derivatives = imag(x.derivatives)
+            x.values = imag(x.values);
+        end
+        
         function x = atan(x)
             x.derivatives = AutoDiff.spdiag(1./(1 + x.values.^2)) * x.derivatives;
             x.values = atan(x.values);

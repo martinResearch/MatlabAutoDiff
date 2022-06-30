@@ -14,6 +14,18 @@ end
 % f = @(x) diff(x, 1, 3);
 % CheckAutoDiffJacobian(f, randn(2,2), 1e-9);
 
+f = @(x) real(x);
+CheckAutoDiffJacobian(f, randn(2,2)+i*randn(2,2), 1e-9);
+
+f = @(x) imag(x);
+CheckAutoDiffJacobian(f, randn(2,2)+i*randn(2,2), 1e-9);
+
+f = @(x) i*x;
+CheckAutoDiffJacobian(f, randn(2,2)+i*randn(2,2), 1e-9);
+
+f = @(x) real(i*x);
+CheckAutoDiffJacobian(f, randn(2,2)+i*randn(2,2), 1e-9);
+
 f = @(x) sum(x,3);
 CheckAutoDiffJacobian(f, randn(2,2), 1e-9);
 
