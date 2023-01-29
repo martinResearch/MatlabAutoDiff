@@ -165,6 +165,14 @@ more examples can be found in [./src/AutoDiffExamples.m](./src/examplesSmall.m)
 
 * [PTNobel/AutoDiff](https://github.com/PTNobel/AutoDiff) By Part Nobel. Python. Non-intrusive Forward differentiation with sparse Jacobians support.
 
+## Projects that use this library
+
+* [pde1dm](https://github.com/wgreene310/pde1dm). 1D Partial Differential Equation Solver for MATLAB and Octave.
+* [NSCool_Old](https://github.com/Axect/NSCool_Old). Neutron Star Cooling simulation.
+
+Please add a comment in [this issue](https://github.com/martinResearch/MatlabAutoDiff/issues/16) if you which to add you project in this listing. I am very interested  in knowing what it has been used for.
+
+
 ## References
 
 [1] Forth, Shaun A. *An Efficient Overloaded Implementation of Forward Mode Automatic Differentiation in MATLAB*
