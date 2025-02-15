@@ -1,0 +1,18 @@
+name: Octave CI Tests
+
+on: [push, pull_request]  # Runs on every push and PR
+
+jobs:
+  test:
+    runs-on: ubuntu-latest  # Use Ubuntu since it supports Octave
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4  # Clones your repo
+
+      - name: Install Octave
+        run: sudo apt-get update && sudo apt-get install -y octave
+
+      - name: Run Octave Tests
+        run: |
+          octave --eval "disp('Running Octave Tests...'); addpath('src'); results = test('src/AutoDiff_tests'); disp(results);"
