@@ -169,7 +169,7 @@ more examples can be found in [./src/AutoDiffExamples.m](./src/examplesSmall.m)
 
 * [pde1dm](https://github.com/wgreene310/pde1dm). 1D Partial Differential Equation Solver for MATLAB and Octave.
 * [NSCool_Old](https://github.com/Axect/NSCool_Old). Neutron Star Cooling simulation.
-
+* [MatlabGP](https://github.com/noblec04/MatlabGP).A Gaussian Process and Neural Network library that is using AutoDiff for hyperparameters finding and for providing gradients for Bayesian Optimization (BO) adaptive sampling.
 Please add a comment in [this issue](https://github.com/martinResearch/MatlabAutoDiff/issues/16) if you which to add you project in this listing. I am very interested  in knowing what it has been used for.
 
 
