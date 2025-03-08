@@ -174,9 +174,8 @@ more examples can be found in [./src/AutoDiffExamples.m](./src/examplesSmall.m)
 Please add a comment in [this issue](https://github.com/martinResearch/MatlabAutoDiff/issues/16) if you which to add you project in this listing. I am very interested  in knowing what it has been used for.
 
 ## References
- * 
-## References
 
-[1] Forth, Shaun A. *An Efficient Overloaded Implementation of Forward Mode Automatic Differentiation in MATLAB*
+
+* [1] Forth, Shaun A. *An Efficient Overloaded Implementation of Forward Mode Automatic Differentiation in MATLAB*
 ACM Trans. Math. Softw. 2006 [pdf](https://core.ac.uk/download/files/23/139791.pdf)
-[2]  Andreas Griewank and Andrea Walther. *Evaluating Derivatives: Principles and Techniques of Algorithmic Differentiation*, Second Edition. 2008
+* [2]  Andreas Griewank and Andrea Walther. *Evaluating Derivatives: Principles and Techniques of Algorithmic Differentiation*, Second Edition. 2008
