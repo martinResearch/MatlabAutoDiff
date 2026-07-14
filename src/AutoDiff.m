@@ -916,6 +916,91 @@ classdef AutoDiff
             Vad = AutoDiff(V,dV);
         end% svd()
 
+
+        function [Uad, Zad, Vad] = zvd(A)
+        error('zvd() not even alpha-version yet')
+            % Economy-size SVD A=UZV' for AutoDiff matrix A, mxn real or
+            % complex: gives mxk U, kxk Z, nxk V and its derivatives,
+            % for rank k=number of non-zero complex-valued singular values
+            % [k<=min(m,n)]. Assumes there are no coincident zingular
+            % values (as otherwise F divides by zero).  Only compute the
+            % economy rank k decomposition because for (multiple)
+            % zero-rows/columns of Z the corresponding columns of U&V
+            % are not unique, and so their derivative is meaningless.
+            %
+            % AJR 14/7/2026, revised from my above svd()
+            %
+            % AutoDiffsvdRankThresh (global) sets threshold on zingular
+            % values for determining the rank of the SVD and its
+            % derivatives: zingular values s.t. |z_i|/|z_1| < threshold
+            % are zeroed, and rank reduced accordingly.  Reason? 
+            % derivatives of U&V involve division by zingular values so
+            % are very sensitive to very small ones.
+            global AutoDiffsvdRankThresh
+            if ~( exist('AutoDiffsvdRankThresh') ...
+                    && ~isempty(AutoDiffsvdRankThresh) )
+                AutoDiffsvdRankThresh = 1e-10;  % guess useful default
+            end%if exist
+            [m,n] = size(A.values);
+            [U,Z,V] = svd(A.values);
+            z = diag(Z);
+            k = max(find(z>AutoDiffsvdRankThresh*z(1))); 
+            z = z(1:k);     % kx1 col.vector of singular values
+            U = U(:,1:k);   % mxk as in T2016
+            Z = diag(z);    % kxk matrix
+            V = V(:,1:k);   % nxk as in T2016
+            % 'rotate' each column of U&V so largest-V is real-positive
+            % and largest-U is real-positive ??
+            % Means computed U&V is almost-always unique.
+            [~,iVM]=max(abs(V));
+            c=nan(1,k);
+            for j=1:k, c(j)=conj(V(iVM(j),j))/abs(V(iVM(j),j)); end
+            U=U.*c;  V=V.*c; % ??set z values here
+            
+            N = size(A.derivatives,2);
+            dU = sparse(m*k,N); 
+            dZ = sparse(k*k,N);
+            dV = sparse(n*k,N);
+            % cater for sparse columns in A.derivatives
+            [~,jN] = find(A.derivatives); % find non-zero columns
+            jN = unique(jN);
+            N = length(jN);  % redefined to number of non-zero cols
+            % use fast pagemtimes if available
+            if exist('pagemtimes')==5,  Mx = @pagemtimes; 
+            else Mx = @AutoDiff.pageMmult;
+            end%if exist
+            T = 'ctranspose';   O = 'none';
+            dA = reshape(full(A.derivatives(:,jN)),m,n,N);
+            dP = Mx(U,T,Mx(dA,V),O); % U'*dA*V  k.k.N
+            iDiag = find(speye(k));
+            dP2D = reshape(dP,k^2,N);
+            dZ(iDiag,jN) = real(dP2D(iDiag,:)); % diag(real(diag(dP)));
+            dP = dP-reshape(full(dZ(:,jN)),k,k,N);
+            Foff=(1-eye(k))./(z'.^2-z.^2+eye(k)); % k.k
+            symM=@(X) X+conj(permute(X,[2 1 3]));
+            % be careful with c.c. of Z
+            UdUoff=Foff.*symM(dP.*z'); % Foff.*(dP*Z+Z*dP'), k.k.N
+            VdVoff=Foff.*symM( z.*dP); % Foff.*(Z*dP+dP'*Z), k.k.N
+            dVi = Mx(V, VdVoff ); % V*( VdVoff ), n.k.N
+            dP2D = reshape(dP,k^2,N);
+            UdUoff = reshape(UdUoff,k^2,N);  % UdUoff+diag(diag(dP)./z)
+            UdUoff(iDiag,:) = UdUoff(iDiag,:)+dP2D(iDiag,:)./z;
+            dUi = Mx(U, reshape(UdUoff,k,k,N) ); % U*( UdUoff ), m.k.N
+            if m>k, dUi=dUi+Mx(Mx(eye(m)-U*U',O,dA,O),V./z'); end
+            if n>k, dVi=dVi+Mx(Mx(eye(n)-V*V',O,dA,T),U./z'); end
+            c = nan(1,k,N);
+            for j=1:k
+                c(1,j,:) = (-1i./abs(V(iVM(j),j))).*imag(dVi(iVM(j),j,:));
+            end%for j
+            dV(:,jN) = reshape( dVi+V.*c ,n*k,N);
+            dU(:,jN) = reshape( dUi+U.*c ,m*k,N);
+            % form results as AutoDiff entities
+            Uad = AutoDiff(U,dU);
+            Zad = AutoDiff(Z,dZ);
+            Vad = AutoDiff(V,dV);
+        end% zvd()
+
+
         function n = numel(x)
             n = numel(x.values);
         end

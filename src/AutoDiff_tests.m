@@ -10,9 +10,9 @@ if ~exist('pagemtimes')
     addpath("./backports")    
 end
 
-% to be fixed
-% f = @(x) diff(x, 1, 3);
-% CheckAutoDiffJacobian(f, randn(2,2), 1e-9);
+% AJR, fixed June 2026
+f = @(x) diff(x, 1, 3);
+CheckAutoDiffJacobian(f, randn(2,3,4), 1e-9);
 
 f = @(x) real(x);
 CheckAutoDiffJacobian(f, randn(2,2)+i*randn(2,2), 1e-9);
@@ -130,11 +130,12 @@ CheckAutoDiffJacobian(f, rand(2, 3), 1e-9);
 f = @(x) tan(x);
 CheckAutoDiffJacobian(f, rand(2, 3), 1e-9);
 
+% AJR avoid magnified errors in steep gradients
 f = @(x) acos(x);
-CheckAutoDiffJacobian(f, rand(2, 3), 1e-9);
+CheckAutoDiffJacobian(f, rand(2, 3)-0.3, 1e-9);
 
 f = @(x) asin(x);
-CheckAutoDiffJacobian(f, rand(2, 3), 1e-7);
+CheckAutoDiffJacobian(f, rand(2, 3)-0.3, 1e-9);
 
 f = @(x) atan(x);
 CheckAutoDiffJacobian(f, rand(2, 3), 1e-9);
@@ -451,14 +452,15 @@ CheckAutoDiffJacobian(f, rand(3, 3), 1e-8);
 f = @(x) acosh(x);
 CheckAutoDiffJacobian(f, rand(4, 4), 1e-9);
 
+% AJR avoid magnified errors in steep gradients
 f = @(x) atanh(x);
-CheckAutoDiffJacobian(f, rand(2, 2), 1e-9);
+CheckAutoDiffJacobian(f, rand(2, 2)-0.3, 1e-9);
 
 f = @(x) atanh(x);
-CheckAutoDiffJacobian(f, rand(3, 3), 1e-9);
+CheckAutoDiffJacobian(f, rand(3, 3)-0.3, 1e-9);
 
 f = @(x) atanh(x);
-CheckAutoDiffJacobian(f, rand(4, 4), 1e-9);
+CheckAutoDiffJacobian(f, rand(4, 4)-0.3, 1e-9);
 
 % some other tests
 
@@ -474,6 +476,40 @@ if ~isOctave
 end
 CheckAutoDiffJacobian(f, x0, 1e-8);
 
+
+f = @(x) fft(x);
+dim = randi([3 9],1,2);
+X = randn(dim)+1i*randn(dim);
+CheckAutoDiffJacobian(f, X, 1e-9);
+disp('AD.fft  OK')
+
+f = @(x) ifft(x);
+dim = randi([3 9],1,2);
+X = randn(dim)+1i*randn(dim);
+CheckAutoDiffJacobian(f, X, 1e-9);
+disp('AD.ifft OK')
+
+% AJR: uses extra function to stack result U,S,V
+% and adjust tolerance when close singular values
+f = @(x) stackSvd(x);
+X = randn(randi([3 9],1,2));
+CheckAutoDiffJacobian(f, X, 1e-8*(1+1/min(abs(diff(svd(X))))) );
+disp('AD.svd  OK for real')
+dim = randi([3 9],1,2);
+X = randn(dim)+1i*randn(dim);
+CheckAutoDiffJacobian(f, X, 1e-8*(1+1/min(abs(diff(svd(X))))) );
+disp('AD.svd  OK for cmplx')
+
+function usv = stackSvd(A)
+    % AJR, 14 Jul 2026
+    [m,n] = size(A); k = 1:min(m,n);
+    [U,S,V] = svd(A);
+    % return only k columns, and
+    % ensure col.max-V is real-positive to be consistent with AD.svd()
+    [~,j] = max(abs(V(:,k))); 
+    rot = conj(V(n*(k-1)+j))./abs(V(n*(k-1)+j));
+    usv = [ U(:,k).*rot; S(k,k); V(:,k).*rot ];
+end%function stackSvd
 
 
 
