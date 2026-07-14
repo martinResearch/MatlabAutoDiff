@@ -1,17 +1,52 @@
 # Goal
 
-This project implements a Matlab/Octave non-intrusive forward automatic differentiation method, ([wikipedia definition here](https://en.wikipedia.org/wiki/Automatic_differentiation#Forward_accumulation)) based on operator overloading. This does not provide backward mode or higher order derivatives. More specifically it implements the method refered as *sparse batched AD* in Griewank and Walther [2] Chapter 7,  which allows to exploit sparsity in the intermediate Jacobians to make the computation more efficient. It enables precise and efficient computation of the Jacobian of a function. This contrasts with numerical differentiation (a.k.a finite differences) that is unprecise due to roundoff errors and that cannot exploit the sparsity of the derivatives.
+This project implements a Matlab/Octave non-intrusive
+forward automatic differentiation method, ([wikipedia
+definition here] (https://en.wikipedia.org/wiki/
+Automatic_differentiation#Forward_accumulation)) based on
+operator overloading. This does not provide backward mode or
+higher order derivatives. More specifically it implements
+the method refered as *sparse batched AD* in Griewank and
+Walther [2] Chapter 7,  which allows to exploit sparsity in
+the intermediate Jacobians to make the computation more
+efficient. It enables precise and efficient computation of
+the Jacobian of a function. This contrasts with numerical
+differentiation (a.k.a finite differences) that is unprecise
+due to roundoff errors and that cannot exploit the sparsity
+of the derivatives.
 
-In contrast with most existing automatic differentiation Matlab toolboxes:
+In contrast with most existing automatic differentiation
+Matlab toolboxes:
 
- * Derivatives are represented as sparse matrices, which yield to large speedups with respect to other forward mode methods when the Jacobian of the function we aim to differentiate is sparse or when intermediate accumulated Jacobian matrices are sparse (see the image denoising example). 
- * N dimensional arrays are supported while many Matlab automatic differentiation toolboxes only support scalars, vectors and 2D matrices
+ * Derivatives are represented as sparse matrices, which
+ yield to large speedups with respect to other forward mode
+ methods when the Jacobian of the function we aim to
+ differentiate is sparse or when intermediate accumulated
+ Jacobian matrices are sparse (see the image denoising
+ example). * N dimensional arrays are supported while many
+ Matlab automatic differentiation toolboxes only support
+ scalars, vectors and 2D matrices
 
-It is likely that the speed could be improved by representing Jacobian matrices by their transpose, due to the way Matlab represents internally sparse matrices. The document [1] describes a method similar to the one implemented here and could be a very valuable source to improve the code.
+It is likely that the speed could be improved by
+representing Jacobian matrices by their transpose, due to
+the way Matlab represents internally sparse matrices. The
+document [1] describes a method similar to the one
+implemented here and could be a very valuable source to
+improve the code.
 
-It has been tested on Matlab 2014a and Octave 4.0.0, but the example using the anonymous function @(x)eig(x) does not work on octave as octave does not call the overloaded eig function once anonymized.
+It has been tested on Matlab 2014a and Octave 4.0.0, but the
+example using the anonymous function @(x)eig(x) does not
+work on octave as octave does not call the overloaded eig
+function once anonymized.
 
-Note that backward differentation (a.k.a. gradients back-propagation in deep learning) is going to me much faster than forward differentiation when the dimension of the output is small in comparison to the dimension of the input. Forward differentiation is of interest when solving a non linear least squares for examples through Levenberg-Marquardt minimization where we want to compute the full jacobian matrix of the residuals.
+Note that backward differentation (a.k.a. gradients
+back-propagation in deep learning) is going to me much
+faster than forward differentiation when the dimension of
+the output is small in comparison to the dimension of the
+input. Forward differentiation is of interest when solving a
+non linear least squares for examples through
+Levenberg-Marquardt minimization where we want to compute
+the full jacobian matrix of the residuals.
 
 # Licence
 	
@@ -65,7 +100,9 @@ more examples can be found in [./src/AutoDiffExamples.m](./src/examplesSmall.m)
 		         0         0         0    2.0000         0         0         0    2.0000
 
 ```
-* a simple images denoising example using a total variation (TV) regularization can be found in  [./src/AutoDiffExamples.m](./src/exampleDenoise.m)
+* a simple images denoising example using a total variation
+(TV) regularization can be found in
+[./src/AutoDiffExamples.m] (./src/exampleDenoise.m)
 ```c
 		f=@(x) sum(x.^2,3);
 		AutoDiffJacobianFiniteDiff(f,ones(2,2,2))
@@ -91,7 +128,8 @@ more examples can be found in [./src/AutoDiffExamples.m](./src/examplesSmall.m)
 		
 
 ```
-* a simple SVM classifier training example can be found in  [./src/AutoDiffExamples.m](./src/exampleSVM.m)
+* a simple SVM classifier training example can be found in 
+[./src/AutoDiffExamples.m] (./src/exampleSVM.m)
 ```c
 	function exampleSVM()
 		% create some fake data
@@ -135,21 +173,41 @@ more examples can be found in [./src/AutoDiffExamples.m](./src/examplesSmall.m)
 		end
 ```
 # Related projects
-* [Autodiff_R2016b](https://uk.mathworks.com/matlabcentral/fileexchange/61849-autodiff_r2016b) and [Autodiff_R2015b](http://mathworks.com/matlabcentral/fileexchange/56856-autodiff) by Ultrich Reif. It uses cells to represent derivatives and uses loops instead of vectorized operations in some of the functions, which may make it too slow when using large matrices.
+* [Autodiff_R2016b]
+(https://uk.mathworks.com/matlabcentral/fileexchange/61849-
+autodiff_r2016b) and [Autodiff_R2015b]
+(http://mathworks.com/matlabcentral/fileexchange/56856-
+autodiff) by Ultrich Reif. It uses cells to represent
+derivatives and uses loops instead of vectorized operations
+in some of the functions, which may make it too slow when
+using large matrices.
 
-* [TOMLAB/MAD](http://tomopt.com/tomlab/products/mad/). Not free. Method described in [1]. Like our code it uses operator overloading and can use sparse matrices to store directional derivatives.
+* [TOMLAB/MAD] (http://tomopt.com/tomlab/products/mad/). Not
+free. Method described in [1]. Like our code it uses
+operator overloading and can use sparse matrices to store
+directional derivatives.
 
-* [Automatic Differentiation for Matlab](http://www.mathworks.com/matlabcentral/fileexchange/15235-automatic-differentiation-for-matlab/) by Martin Fink.
- Forward mode AD using operator overloading. Does not work with ND arrays. Not efficient for functions with sparse jacobians as it uses dense 3D arrays to store the derivatives.
+* [Automatic Differentiation for Matlab]
+(http://www.mathworks.com/matlabcentral/fileexchange/15235-
+automatic-differentiation-for-matlab/) by Martin Fink.
+Forward mode AD using operator overloading. Does not work
+with ND arrays. Not efficient for functions with sparse
+jacobians as it uses dense 3D arrays to store the
+derivatives.
 
-* [Automatic Differentiation with Matlab Objects](http://mathworks.com/matlabcentral/fileexchange/26807-automatic-differentiation-with-matlab-objects) by William Mcllhagga. Supports sparse jacobians but does not support ND arrays or even some matrix operations. This will fail.
+* [Automatic Differentiation with Matlab Objects]
+(http://mathworks.com/matlabcentral/fileexchange/26807-
+automatic-differentiation-with-matlab-objects) by William
+Mcllhagga. Supports sparse jacobians but does not support ND
+arrays or even some matrix operations. This will fail.
 ```c		
 		f=@(x) sum(x'*x)
 		[x,dx] = autodiff(rand(5,1),f)
 
 ```
-* [madiff](https://github.com/gaika/madiff)
-  Reverse mode AD using operator overloading. Operators like transpose are not coded yet  at the date of july 2016 . This will fail
+* [madiff] (https://github.com/gaika/madiff) Reverse mode AD
+using operator overloading. Operators like transpose are not
+coded yet  at the date of july 2016 . This will fail
 ```c		
 		f=@(x)(sum(x'*x))
 		f(rand(20,1))
@@ -158,25 +216,46 @@ more examples can be found in [./src/AutoDiffExamples.m](./src/examplesSmall.m)
 
 ```
 
-* [AD_deriv](https://github.com/jborggaard/AD_Deriv) by Jeff Borggaard
-  works only with scalars at the date of july 2016 (no vector , matrices and NDarrays)
+* [AD_deriv] (https://github.com/jborggaard/AD_Deriv) by
+Jeff Borggaard works only with scalars at the date of july
+2016 (no vector , matrices and NDarrays)
 
-* [Sparsegrad](https://pypi.org/project/sparsegrad/) by Marek Szymanski. Python. Automatically and efficiently calculates analytical sparse Jacobian of arbitrary numpy vector valued functions. Does not support ND arrays yet in August 2019.
+* [Sparsegrad] (https://pypi.org/project/sparsegrad/) by
+Marek Szymanski. Python. Automatically and efficiently
+calculates analytical sparse Jacobian of arbitrary numpy
+vector valued functions. Does not support ND arrays yet in
+August 2019.
 
-* [PTNobel/AutoDiff](https://github.com/PTNobel/AutoDiff) By Part Nobel. Python. Non-intrusive Forward differentiation with sparse Jacobians support.
+* [PTNobel/AutoDiff] (https://github.com/PTNobel/AutoDiff)
+By Part Nobel. Python. Non-intrusive Forward differentiation
+with sparse Jacobians support.
 
 ## Projects that use this library
 
-* [pde1dm](https://github.com/wgreene310/pde1dm). 1D Partial Differential Equation Solver for MATLAB and Octave.
-* [NSCool_Old](https://github.com/Axect/NSCool_Old). Neutron Star Cooling simulation.
-* [MatlabGP](https://github.com/noblec04/MatlabGP).A Gaussian Process and Neural Network library that is using AutoDiff for hyperparameters finding and for providing gradients for Bayesian Optimization (BO) adaptive sampling.
-* [EquationFreeGit](https://github.com/uoa1184615/EquationFreeGit). Equation-Free function toolbox for Matlab/Octave.
+* [pde1dm] (https://github.com/wgreene310/pde1dm). 1D
+Partial Differential Equation Solver for MATLAB and Octave.
 
-Please add a comment in [this issue](https://github.com/martinResearch/MatlabAutoDiff/issues/16) if you which to add you project in this listing. I am very interested  in knowing what it has been used for.
+* [NSCool_Old] (https://github.com/Axect/NSCool_Old).
+Neutron Star Cooling simulation.
+
+* [MatlabGP] (https://github.com/noblec04/MatlabGP).A
+Gaussian Process and Neural Network library that is using
+AutoDiff for hyperparameters finding and for providing
+gradients for Bayesian Optimization (BO) adaptive sampling.
+
+Please add a comment in [this issue]
+(https://github.com/martinResearch/MatlabAutoDiff/issues/16)
+if you which to add you project in this listing. I am very
+interested  in knowing what it has been used for.
 
 ## References
 
 
-* [1] Forth, Shaun A. *An Efficient Overloaded Implementation of Forward Mode Automatic Differentiation in MATLAB*
-ACM Trans. Math. Softw. 2006 [pdf](https://core.ac.uk/download/files/23/139791.pdf)
-* [2]  Andreas Griewank and Andrea Walther. *Evaluating Derivatives: Principles and Techniques of Algorithmic Differentiation*, Second Edition. 2008
+* [1] Forth, Shaun A. *An Efficient Overloaded
+Implementation of Forward Mode Automatic Differentiation in
+MATLAB* ACM Trans. Math. Softw. 2006
+[pdf](https://core.ac.uk/download/files/23/139791.pdf)
+
+* [2]  Andreas Griewank and Andrea Walther. *Evaluating
+Derivatives: Principles and Techniques of Algorithmic
+Differentiation*, Second Edition. 2008
