@@ -1,7 +1,7 @@
 function [J, f] = AutoDiffJacobianAutoDiff(func, x, range)
 
-% AutoDiffJacobianAutoDiff returns the jacobian of function evaluated at x using Automatic
-% Differentiation
+% AutoDiffJacobianAutoDiff returns the jacobian of function
+% evaluated at x using Automatic Differentiation
 %
 %
 %  J = AutoDiffJacobianAutoDiff(func,x)
@@ -15,12 +15,14 @@ function [J, f] = AutoDiffJacobianAutoDiff(func, x, range)
 %     J       : jacobian matrix of function f evaluated at x
 %
 % Description:
-%     returns the jacobian matrix of function f evaluated at x
-%     if a range is specified , only the columns corresponding to the range
-%     indices are computed. The computation is donc using Automatic
-%     Differentiation (Not to be confounded with Finite Differences method)
-%     This is numerically more precise and, if the Jacobian is large and
-%     sparse this might be much faster (see examples)
+%     returns the jacobian matrix of function f evaluated at
+%     x if a range is specified , only the columns
+%     corresponding to the range indices are computed. The
+%     computation is donc using Automatic Differentiation
+%     (Not to be confounded with Finite Differences method)
+%     This is numerically more precise and, if the Jacobian
+%     is large and sparse this might be much faster (see
+%     examples)
 %
 % Examples:
 %
@@ -55,7 +57,8 @@ else
     end
     sx = size(x);
     nr = numel(range);
-    xAD = AutoDiff(x, sparse(range, (1:nr), ones(1, nr), sx(1) * sx(2), nr));
+    % AJR 11 Jun 2026: changed to prod() to cater for >2-D arrays x
+    xAD = AutoDiff(x, sparse(range, (1:nr), ones(1, nr), prod(sx), nr));
 end
 
 try
@@ -63,11 +66,13 @@ try
     f = getvalue(fAD);
     J = getderivs(fAD);
 catch exception
-    warning('failed while calling the function with the AutoDiff instance, trying to call it with the plain data instead to chech that works')
+    warning('failed while calling the function with the AutoDiff instance, trying to call it with the plain data instead to check that works')
     func(x);
     warning('It seems like to original function is ok with the plain data , The class AutoDiff needs debugging')
     % rethrow(exception)
-    [~] = func(xAD); % better to call again the function instead of using exception as it makes it possible to use matlab's stop-if -error debugging functionality
+    [~] = func(xAD); % better to call again the function instead of using
+% exception as it makes it possible to use matlab's stop-if
+% -error debugging functionality
 end
 
 

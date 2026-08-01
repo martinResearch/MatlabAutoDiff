@@ -1,7 +1,7 @@
 function [J, f] = AutoDiffJacobianFiniteDiff(func, x, range, epsilons, centered)
 
-% AutoDiffJacobianFiniteDiff returns the jacobian of function f evaluated at x using Finite
-% Differences.
+% AutoDiffJacobianFiniteDiff returns the jacobian of
+% function func evaluated at x using Finite Differences.
 %
 %
 %  J = AutoDiffJacobianFiniteDiff(func,x)
@@ -12,16 +12,19 @@ function [J, f] = AutoDiffJacobianFiniteDiff(func, x, range, epsilons, centered)
 %     x       : location where the jacobian is evaluated
 %     range   : (optional) vector of integer indices in [1,numel(x)]
 % Outputs:
-%     J       : jacobian matrix of function f evaluated at x
+%     J       : jacobian matrix of function func evaluated at x
+%     f       : value of function func evaluated at x
 %
 % Description:
-%     returns the jacobian matrix of function f evaluated at x
-%     if a range is specified , only the columns corresponding to the range
-%     indices are computed. The computation is donc using Finite
-%     Differences. This might be unprecise due to rounoff errors.
-%     This is provided as a way to check the validity of the Automatic differenciation
-%     method. Considere using AutoDiffJacobianAutoDiff instead to get faster
-%     and more accurate derivatives.
+%     returns the jacobian matrix of function f evaluated at
+%     x if a range is specified, only the columns
+%     corresponding to the range indices are computed. The
+%     computation is done using Finite Differences. This
+%     might be imprecise due to rounoff errors. This is
+%     provided as a way to check the validity of the
+%     Automatic differentiation method. Consider using
+%     AutoDiffJacobianAutoDiff instead to get faster and
+%     more accurate derivatives.
 %
 % Documentation created  by Martin de La Gorce
 
